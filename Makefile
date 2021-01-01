@@ -8,20 +8,19 @@ prod: #application application to production
 	npm run build
 
 ################################
-####	GIT TERITORY
+#### SIMPLE GIT AUTOMATION
 ################################
 
 GIT := git
-MSG = update files
 
-gh: git.a git.c git.p #simple automation git
+gh: git.a git.c git.p
 
 git.a:
 	${GIT} add .
 
 git.c:
-ifdef command
-	${GIT} commit -m ${command}
+ifdef msg
+	${GIT} commit -m "${msg}"
 endif
 
 git.p:
