@@ -1,0 +1,20 @@
+{
+	"parserOptions": {
+		"ecmaVersion": 2015
+	},
+	"parser": "@typescript-eslint/parser",
+	"extends": ["plugin:@typescript-eslint/recommended", "plugin:eslint-plugin/recommended"],
+	"env": {
+		"node": true
+	},
+	"rules": {
+		"@typescript-eslint/no-explicit-any": 0,
+		"eslint-plugin/fixer-return": 0,
+		"eslint-plugin/no-identical-tests": 0,
+		"eslint-plugin/no-unused-placeholders": 0,
+		"eslint-plugin/no-useless-token-range": 0,
+		"eslint-plugin/require-meta-fixable": 0,
+		"eslint-plugin/no-deprecated-report-api": 0,
+		"eslint-plugin/no-missing-placeholders": 0
+	}
+}

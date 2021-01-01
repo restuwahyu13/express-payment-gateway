@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"outDir": "dist",
+		"target": "ES2016",
+		"module": "CommonJS",
+		"moduleResolution": "node",
+		"esModuleInterop": true,
+		"downlevelIteration": true,
+		"skipLibCheck": true,
+		"sourceMap": true,
+		"experimentalDecorators": true,
+		"removeComments": true,
+		"noEmitOnError": true,
+		"noImplicitUseStrict": true,
+		"strict": false,
+		"alwaysStrict": false,
+		"noImplicitAny": false,
+		"typeRoots": ["node_modules/@types/"]
+	},
+	"include": ["server.ts", "src/**/*.ts", "src/database/**/*.js", "knexfile.ts"],
+	"exclude": ["node_modules", "dist"]
+}
