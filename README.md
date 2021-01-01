@@ -10,17 +10,19 @@ example simulate payment gateway studi case Backend Developer in PT Maritim Digi
 
 ```makefile
 ################################
-####	GIT TERITORY
+####	SIMPLE GIT AUTOMATION
 ################################
 
-GIT = git
+GIT := git
 MSG = update files
-github: git.a git.c git.p #simple automation git
+
+gh: git.a git.c git.p
 
 git.a:
 	${GIT} add .
+
 git.c:
-	${GIT} commit -m ${MSG}
+	${GIT} commit -m "${MSG}"
 
 git.p:
 	${GIT} push origin master
