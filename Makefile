@@ -1,13 +1,24 @@
-NODE_ENV := development.o production.o
-ENV = development
-runner: ${NODE_ENV}
-
-development.o:
-ifeq (${ENV}, development)
+################################
+####	APP TERITORY
+################################
+dev: #application winth env development
 	npm run dev
-endif
 
-production.o:
-ifeq (${ENV}, production)
+prod: #application application to production
 	npm run build
-endif
+
+################################
+####	GIT TERITORY
+################################
+
+GIT = git
+MSG = update files
+github: git.a git.c git.p #simple automation git
+
+git.a:
+	${GIT} add .
+git.c:
+	${GIT} commit -m ${MSG}
+
+git.p:
+	${GIT} push origin master
