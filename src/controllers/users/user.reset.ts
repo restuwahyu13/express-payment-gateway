@@ -8,7 +8,7 @@ import { hashPassword as encodePassword } from '../../utils/util.encrypt'
 export const reset = async (req: Request, res: Response): Promise<Response<any>> => {
 	try {
 		const accessToken: string = decodedJwt(req.params.token)
-		const { email }: UsersDTO = jwt.verify(accessToken, process.env.JWT_SECRET)
+		const { email }: string | any = jwt.verify(accessToken, process.env.JWT_SECRET)
 
 		const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: email }).select('password')
 
