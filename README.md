@@ -13,7 +13,7 @@ example simulate payment gateway studi case Backend Developer in PT Maritim Digi
 #### SIMPLE GIT AUTOMATION
 ################################
 
-#execute command make gh msg=update file using makefile
+#execute command -> make gh msg="update using make file"
 
 GIT := git
 
@@ -24,7 +24,7 @@ git.a:
 
 git.c:
 ifdef msg
-	${GIT} commit -m "${msg}"
+	${GIT} commit -m ${msg}
 endif
 
 git.p:
