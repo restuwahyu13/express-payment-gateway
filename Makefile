@@ -20,7 +20,9 @@ git.a:
 	${GIT} add .
 
 git.c:
-	${GIT} commit -m "${MSG}"
+ifdef command
+	${GIT} commit -m ${command}
+endif
 
 git.p:
 	${GIT} push origin master
