@@ -13,7 +13,7 @@ example simulate payment gateway studi case Backend Developer in PT Maritim Digi
 #### SIMPLE GIT AUTOMATION
 ################################
 
-#execute command make gh m=update user controller
+#execute command make gh msg=update file using makefile
 
 GIT := git
 
