@@ -1,5 +1,5 @@
-import knex from '../../database'
 import { Request, Response } from 'express'
+import knex from '../../database'
 import { UsersDTO } from '../../dto/users'
 import { decodedJwt } from '../../utils/util.jwt'
 

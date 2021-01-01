@@ -1,17 +1,18 @@
 const SERVER_URL = process.env.SERVER_URL
 
-interface IRegisterMail {
+interface IResendMail {
 	from: string
 	to: string
 	subject: string
 	html: string
 }
 
-export const tempMailRegister = (to: string, token: string): IRegisterMail => ({
-	from: 'codingstreetart@stack.com',
-	to: to,
-	subject: 'Email Activation Account',
-	html: `
+export const tempMailResend = (to: string, token: string): IResendMail => {
+	return {
+		from: 'codingstreetart@stack.com',
+		to: to,
+		subject: 'Email Activation Account',
+		html: `
         <!DOCTYPE html>
         <html lang="en">
 
@@ -148,7 +149,7 @@ export const tempMailRegister = (to: string, token: string): IRegisterMail => ({
                 </div>
                 <div class="card-body">
                     <p class="card-title"><strong>Hello Dear ${to}</strong></p>
-                        <p class="card-subtitle"><strong>Kepada user YTH </strong>silahkan konfirmasi account  anda:
+                        <p class="card-subtitle"><strong>Kepada user YTH </strong>silahkan konfirmasi account anda:
                     </p>
                 <div class="text-content">
                     <button>
@@ -163,4 +164,5 @@ export const tempMailRegister = (to: string, token: string): IRegisterMail => ({
           </body>
       </html>
         `
-})
+	}
+}

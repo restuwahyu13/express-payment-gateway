@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import knex from '../../database'
 import { UsersDTO } from '../../dto/users'
+import { LogsDTO } from '../../dto/logs'
 import { encodedJwt } from '../../utils/util.jwt'
 import { verifyPassword } from '../../utils/util.encrypt'
 
@@ -37,7 +38,11 @@ export const login = async (req: Request, res: Response): Promise<Response<any>>
 				})
 			}
 
-			const updateFirstLogin = await knex<UsersDTO>('users').where({ email }).update({ first_login: new Date() })
+			await knex<LogsDTO>('logs').insert({ user_id: user_id, status: 'STATUS_LOGIN', created_at: new Date() })
+			const updateFirstLogin: number = await knex<UsersDTO>('users')
+				.where({ email })
+				.update({ first_login: new Date() })
+
 			if (updateFirstLogin > 0) {
 				return res.status(200).json({
 					status: res.statusCode,
