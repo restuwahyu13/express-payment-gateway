@@ -3,12 +3,12 @@ import knex from '../../database'
 import sgMail from '@sendgrid/mail'
 import { ClientResponse } from '@sendgrid/client/src/response'
 import { UsersDTO } from '../../dto/users'
-import { tempMailResend } from '../../templates/template.resend'
+import { tempMailReset } from '../../templates/template.reset'
 import { encodedJwt } from '../../utils/util.jwt'
 sgMail.setApiKey(process.env.SG_SECRET)
 
-export const resend = async (req: Request, res: Response): Promise<Response<any>> => {
-	interface IResendMail {
+export const forgot = async (req: Request, res: Response): Promise<Response<any>> => {
+	interface IResetMail {
 		from: string
 		to: string
 		subject: string
@@ -25,17 +25,9 @@ export const resend = async (req: Request, res: Response): Promise<Response<any>
 		})
 	}
 
-	if (findUser[0].active == true) {
-		return res.status(200).json({
-			status: res.statusCode,
-			method: req.method,
-			message: 'User account hash been active, please login'
-		})
-	}
-
 	const { user_id, email }: UsersDTO = findUser[0]
 	const token: string = encodedJwt({ user_id, email }, { expiresIn: '5m' })
-	const template: IResendMail = tempMailResend(email, token)
+	const template: IResetMail = tempMailReset(email, token)
 
 	const sgResponse: [ClientResponse, any] = await sgMail.send(template)
 	if (!sgResponse) {
@@ -49,6 +41,6 @@ export const resend = async (req: Request, res: Response): Promise<Response<any>
 	return res.status(200).json({
 		status: res.statusCode,
 		method: req.method,
-		message: `resend activation successfuly, please check your email ${email}`
+		message: `forgot password successfuly, please check your email ${email}`
 	})
 }

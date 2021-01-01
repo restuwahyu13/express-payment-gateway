@@ -16,7 +16,7 @@ export const register = async (req: Request, res: Response): Promise<Response<an
 		html: string
 	}
 
-	const findUser = await knex<UsersDTO>('users').where({ email: req.body.email }).select('*')
+	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: req.body.email }).select('*')
 	if (findUser.length > 0) {
 		return res.status(409).json({
 			status: res.statusCode,
@@ -51,7 +51,7 @@ export const register = async (req: Request, res: Response): Promise<Response<an
 		return res.status(500).json({
 			status: res.statusCode,
 			method: req.method,
-			message: `Sendgrid failed to sending email activation`
+			message: 'Server error failed to sending email activation'
 		})
 	}
 
