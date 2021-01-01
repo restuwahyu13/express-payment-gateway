@@ -11,14 +11,16 @@ prod: #application application to production
 ####	GIT TERITORY
 ################################
 
-GIT = git
+GIT := git
 MSG = update files
-github: git.a git.c git.p #simple automation git
+
+gh: git.a git.c git.p #simple automation git
 
 git.a:
 	${GIT} add .
+
 git.c:
-	${GIT} commit -m ${MSG}
+	${GIT} commit -m "${MSG}"
 
 git.p:
 	${GIT} push origin master
