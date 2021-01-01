@@ -15,7 +15,7 @@ export const forgot = async (req: Request, res: Response): Promise<Response<any>
 		html: string
 	}
 
-	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: req.body.email }).select('active')
+	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: req.body.email }).select()
 
 	if (findUser.length < 1) {
 		return res.status(404).json({
@@ -25,8 +25,16 @@ export const forgot = async (req: Request, res: Response): Promise<Response<any>
 		})
 	}
 
+	if (findUser[0].active == false) {
+		return res.status(400).json({
+			status: res.statusCode,
+			method: req.method,
+			message: 'user account is not active, please resend new activation token'
+		})
+	}
+
 	const { user_id, email }: UsersDTO = findUser[0]
-	const token: string = encodedJwt({ user_id, email }, { expiresIn: '5m' })
+	const token: string = encodedJwt({ user_id, email }, { expiresIn: '1d' })
 	const template: IResetMail = tempMailReset(email, token)
 
 	const sgResponse: [ClientResponse, any] = await sgMail.send(template)

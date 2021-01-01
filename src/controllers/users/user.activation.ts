@@ -20,6 +20,15 @@ export const activation = async (req: Request, res: Response): Promise<Response<
 			})
 		}
 
+		const updateActive: number = await knex<UsersDTO>('users').where({ email }).update({ active: true })
+		if (updateActive < 1) {
+			return res.status(400).json({
+				status: res.statusCode,
+				method: req.method,
+				message: 'activation account failed, please try again'
+			})
+		}
+
 		return res.status(200).json({
 			status: res.statusCode,
 			method: req.method,
@@ -29,7 +38,7 @@ export const activation = async (req: Request, res: Response): Promise<Response<
 		return res.status(401).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'access token expired, please try again'
+			message: 'access token expired, please resend new activation token'
 		})
 	}
 }

@@ -1,16 +1,15 @@
 import { Request, Response } from 'express'
+import jwt from 'jsonwebtoken'
 import knex from '../../database'
 import { UsersDTO } from '../../dto/users'
 import { decodedJwt } from '../../utils/util.jwt'
-import { verifyPassword } from '../../utils/util.encrypt'
+import { hashPassword as encodePassword } from '../../utils/util.encrypt'
 
 export const reset = async (req: Request, res: Response): Promise<Response<any>> => {
 	try {
-		interface IEmail {
-			email: string
-		}
+		const accessToken: string = decodedJwt(req.params.token)
+		const { email }: UsersDTO = jwt.verify(accessToken, process.env.JWT_SECRET)
 
-		const { email }: IEmail = decodedJwt(req.params.token)
 		const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: email }).select('password')
 
 		if (findUser.length < 1) {
@@ -21,41 +20,29 @@ export const reset = async (req: Request, res: Response): Promise<Response<any>>
 			})
 		}
 
-		const { password } = req.body
-		const hashPassword = findUser[0].password
+		const hashPassword: string = encodePassword(req.body.password)
+		const updatePassword: number = await knex<UsersDTO>('users')
+			.where({ email: email })
+			.update({ password: hashPassword })
 
-		verifyPassword(
-			password,
-			hashPassword,
-			async (err: any, success: boolean): Promise<Response<any>> => {
-				if (err) {
-					return res.status(500).json({
-						status: res.statusCode,
-						method: req.method,
-						message: `Internal Server Error ${err}`
-					})
-				}
+		if (updatePassword < 1) {
+			return res.status(200).json({
+				status: res.statusCode,
+				method: req.method,
+				message: 'update password failed, please try again'
+			})
+		}
 
-				if (!success) {
-					return res.status(400).json({
-						status: res.statusCode,
-						method: req.method,
-						message: 'old username/password is wrong'
-					})
-				}
-
-				return res.status(200).json({
-					status: res.statusCode,
-					method: req.method,
-					message: 'change password successfuly, please login'
-				})
-			}
-		)
+		return res.status(200).json({
+			status: res.statusCode,
+			method: req.method,
+			message: 'update password successfully, please login'
+		})
 	} catch (err) {
 		return res.status(401).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'access token expired, please try again'
+			message: 'access token expired, please try forgot password again'
 		})
 	}
 }

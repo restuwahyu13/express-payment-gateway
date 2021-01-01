@@ -6,13 +6,21 @@ import { encodedJwt } from '../../utils/util.jwt'
 import { verifyPassword } from '../../utils/util.encrypt'
 
 export const login = async (req: Request, res: Response): Promise<Response<any>> => {
-	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: req.body }).select('email')
+	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: req.body.email }).select()
 
 	if (findUser.length < 1) {
 		return res.status(404).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'user account is not exitst, please register now'
+			message: 'user account is not exitst, please register'
+		})
+	}
+
+	if (findUser[0].active == false) {
+		return res.status(400).json({
+			status: res.statusCode,
+			method: req.method,
+			message: 'user account is not active, please resend new activation token'
 		})
 	}
 
@@ -40,7 +48,9 @@ export const login = async (req: Request, res: Response): Promise<Response<any>>
 			}
 
 			await knex<LogsDTO>('logs').insert({ user_id: user_id, status: 'STATUS_LOGIN', created_at: new Date() })
-			const updateFirstLogin: number = await knex<UsersDTO>('users').where({ email }).update({ first_login: new Date() })
+			const updateFirstLogin: number = await knex<UsersDTO>('users')
+				.where({ email })
+				.update({ first_login: new Date() })
 
 			if (updateFirstLogin > 0) {
 				return res.status(200).json({

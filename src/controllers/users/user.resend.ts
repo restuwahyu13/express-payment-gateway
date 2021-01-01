@@ -15,7 +15,7 @@ export const resend = async (req: Request, res: Response): Promise<Response<any>
 		html: string
 	}
 
-	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: req.body.email }).select('active')
+	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: req.body.email }).select()
 
 	if (findUser.length < 1) {
 		return res.status(404).json({
@@ -49,6 +49,6 @@ export const resend = async (req: Request, res: Response): Promise<Response<any>
 	return res.status(200).json({
 		status: res.statusCode,
 		method: req.method,
-		message: `resend activation successfuly, please check your email ${email}`
+		message: `resend new token activation successfully, please check your email ${email}`
 	})
 }

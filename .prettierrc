@@ -8,5 +8,5 @@
 	"trailingComma": "none",
 	"quoteProps": "as-needed",
 	"semi": false,
-	"printWidth": 130
+	"printWidth": 120
 }

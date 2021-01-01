@@ -1,4 +1,4 @@
-const SERVER_URL = process.env.SERVER_URL
+const CLIENT_URL = process.env.NODE_ENV !== 'production' ? process.env.URL_DEV : process.env.URL_PROD
 
 interface IResendMail {
 	from: string
@@ -153,7 +153,7 @@ export const tempMailResend = (to: string, token: string): IResendMail => {
                     </p>
                 <div class="text-content">
                     <button>
-                      <a href="${SERVER_URL}/api/v1/users/activation/${token}">Activation Account</a>
+                      <a href="${CLIENT_URL}/api/v1/users/activation/${token}">Activation Account</a>
                     </button>
                     <div class="footer-logo">
                         <span class="footer">&copy; 2020 Coding Street Art, Inc All Right Reserved</span>

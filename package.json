@@ -2,7 +2,7 @@
 	"name": "crawlers-bot-wa",
 	"version": "1.0.0",
 	"description": "chatbot whatsapp web for programming tutorial",
-	"main": "server.js",
+	"main": "dist/server.js",
 	"scripts": {
 		"cleanup": "rimraf dist",
 		"compiler": "tsc --pretty",
