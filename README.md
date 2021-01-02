@@ -16,11 +16,11 @@ example simulate payment gateway studi case Backend Developer in PT Maritim Digi
 #execute command -> make gh msg="update using make file"
 
 GIT := git
-ACTION := add.o commit.o push .o`
+ACTION = add.o commit.o push.o
 
 gh: ${ACTION}
 
-*.o:
+%.o:
 	${GIT} add .
 ifdef msg
 	${GIT} commit -m "${msg}"

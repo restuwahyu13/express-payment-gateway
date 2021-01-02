@@ -12,20 +12,12 @@ prod: #application application to production
 ################################
 
 GIT := git
-ACTION := add.o commit.o push.o
-gh: $(ACTION)
+ACTION = add.o commit.o push.o
+gh: ${ACTION}
 
-${ACTION}*.o:
+%.o:
 	${GIT} add .
 ifdef msg
 	${GIT} commit -m "${msg}"
 endif
 	${GIT} push origin master
-
-# git.c:
-# ifdef msg
-# 	${GIT} commit -m "${msg}"
-# endif
-
-# git.p:
-# 	${GIT} push origin master
