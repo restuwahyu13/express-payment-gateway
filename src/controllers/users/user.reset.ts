@@ -6,8 +6,7 @@ import { hashPassword as encodePassword } from '../../utils/util.encrypt'
 
 export const reset = async (req: Request, res: Response): Promise<Response<any>> => {
 	try {
-		const { email }: string = verifySignAccessToken()(req, res, req.params.token)
-
+		const { email }: UsersDTO = verifySignAccessToken()(req, res, req.params.token)
 		const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: email }).select('password')
 
 		if (findUser.length < 1) {

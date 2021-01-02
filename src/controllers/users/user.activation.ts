@@ -1,15 +1,11 @@
 import { Request, Response } from 'express'
 import knex from '../../database'
 import { UsersDTO } from '../../dto/users'
-import { decodedJwt } from '../../utils/util.oldjwt'
+import { verifySignAccessToken } from '../../utils/util.jwt'
 
 export const activation = async (req: Request, res: Response): Promise<Response<any>> => {
 	try {
-		interface IEmail {
-			email: string
-		}
-
-		const { email }: IEmail = decodedJwt(req.params.token)
+		const { email }: UsersDTO = verifySignAccessToken()(req, res, req.params.token)
 		const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: email }).select('active')
 
 		if (findUser[0].active == true) {

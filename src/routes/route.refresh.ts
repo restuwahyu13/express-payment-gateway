@@ -24,7 +24,7 @@ router.post('/test/login', (req: Request, res: Response) => {
 		email: string
 	}
 	const bodyPayload: IBody = { user_id: Date.now(), email: req.body.email }
-	const token: any = signAccessToken(req, res, bodyPayload)
+	const token: any = signAccessToken()(req, res, { ...bodyPayload }, { expiresIn: '5m' })
 	return res.status(200).json(token)
 })
 
