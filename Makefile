@@ -22,6 +22,6 @@ gh: ${ACTION}
 %.o:
 	${GIT} add .
 ifdef msg
-	${GIT} commit -m ${msg}
+	${GIT} commit -m "${msg}"
 endif
 	${GIT} push origin master
