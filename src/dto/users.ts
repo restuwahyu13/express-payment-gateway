@@ -4,6 +4,7 @@ interface IUsers {
 	readonly password?: string
 	readonly photo?: string
 	readonly active?: boolean
+	readonly noc_transfer?: number
 	readonly first_login?: any
 	readonly last_login?: any
 	readonly created_at?: Date
@@ -16,6 +17,7 @@ export class UsersDTO implements IUsers {
 	readonly password?: string
 	readonly photo?: string
 	readonly active?: boolean
+	readonly noc_transfer?: number
 	readonly first_login?: any
 	readonly last_login?: any
 	readonly created_at?: Date

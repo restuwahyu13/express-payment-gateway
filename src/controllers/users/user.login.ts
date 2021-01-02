@@ -64,7 +64,7 @@ export const login = async (req: Request, res: Response): Promise<Response<any>>
 					status: res.statusCode,
 					method: req.method,
 					message: 'Login successfuly',
-					access_token: token
+					...token
 				})
 			}
 		}

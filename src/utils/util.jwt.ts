@@ -46,6 +46,7 @@ export const verifySignAccessToken = () => (req: Request, res: Response, token: 
 	}
 	const decodedToken: string = Base64.decode(token)
 	const decoded: string | any = jwt.verify(decodedToken, ACCESS_TOKEN_SECRET)
+	console.log(decoded)
 	return decoded
 }
 

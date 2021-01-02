@@ -35,7 +35,7 @@ export const resend = async (req: Request, res: Response): Promise<Response<any>
 
 	const { user_id, email }: UsersDTO = findUser[0]
 	const token: string = signAccessToken()(req, res, { user_id: user_id, email: email }, { expiresIn: '5m' })
-	const template: IResendMail = tempMailResend(email, token)
+	const template: IResendMail = tempMailResend(email, token['accessToken'])
 
 	const sgResponse: [ClientResponse, any] = await sgMail.send(template)
 	if (!sgResponse) {

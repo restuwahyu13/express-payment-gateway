@@ -152,7 +152,7 @@ export const tempMailRegister = (to: string, token: string): IRegisterMail => ({
                     </p>
                 <div class="text-content">
                     <button>
-                      <a href="${CLIENT_URL}/api/v1/users/activation/${token}">Activation Account</a>
+                      <a href="${CLIENT_URL}/api/v1/user/activation/${token}">Activation Account</a>
                     </button>
                     <div class="footer-logo">
                         <span class="footer">&copy; 2021 Barbar Fintech Company, Inc All Right Reserved</span>
