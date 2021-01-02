@@ -4,8 +4,8 @@ const events = new EventEmitter()
 
 interface IMessage {
 	response: Response
-	method: string
 	statusCode: number
+	method: string
 	message: string
 }
 
