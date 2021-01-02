@@ -33,7 +33,7 @@ export const register = async (req: Request, res: Response): Promise<Response<an
 		})
 		.returning(['user_id', 'email'])
 
-	if (!saveUser[0]) {
+	if (Object.keys(saveUser[0]).length < 1) {
 		return res.status(400).json({
 			status: res.statusCode,
 			method: req.method,
@@ -42,7 +42,7 @@ export const register = async (req: Request, res: Response): Promise<Response<an
 	}
 
 	const { user_id, email }: UsersDTO = saveUser[0]
-	const token: string = encodedJwt({ user_id, email }, { expiresIn: '5m' })
+	const token: string = encodedJwt({ user_id: user_id, email: email }, { expiresIn: '5m' })
 	const template: IRegisterMail = tempMailRegister(email, token)
 
 	const sgResponse: [ClientResponse, any] = await sgMail.send(template)

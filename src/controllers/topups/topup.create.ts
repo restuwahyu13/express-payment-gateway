@@ -10,7 +10,7 @@ import { UsersDTO } from './../../dto/users'
 import { tempMailTopup } from '../../templates/template.topup'
 import { dateFormat } from '../../utils/util.date'
 
-export const createTopup = (req: Request, res: Response): Promise<Response<any>> => {
+export const createTopup = async (req: Request, res: Response): Promise<Response<any>> => {
 	interface ITopupMail {
 		from: string
 		to: string
@@ -18,14 +18,7 @@ export const createTopup = (req: Request, res: Response): Promise<Response<any>>
 		html: string
 	}
 
-	interface IBody {
-		user_id: number
-		topup_amount: number
-		topup_time: Date
-	}
-
-	const { user_id, topup_amount, topup_time }: IBody = req.body
-	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ user_id })
+	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ user_id: req.body.user_id })
 
 	if (findUser.length < 1) {
 		return res.status(408).json({
@@ -39,22 +32,22 @@ export const createTopup = (req: Request, res: Response): Promise<Response<any>>
 		.insert({
 			user_id: findUser[0].user_id,
 			topup_no: uuid(),
-			topup_amount,
-			topup_time,
+			topup_amount: req.body.topup_amount,
+			topup_time: dateFormat(new Date()),
 			created_at: new Date()
 		})
 		.returning(['topup_id', 'amount'])
 
-	const { topup_id, user_id, amount }: TopupsDTO = saveTopup[0]
-	await knex<SaldoDTO>('saldo').insert({ topup_id, amount })
+	const { topup_id, user_id, topup_amount }: TopupsDTO = saveTopup[0]
+	await knex<SaldoDTO>('saldo').insert({ topup_id: topup_id, topup_amount: topup_amount })
 	await knex<LogsDTO>('logs').insert({
 		user_id,
 		logs_status: 'TOPUP_BALANCE',
-		logs_time: dateFormat(new Date()).format(),
+		logs_time: dateFormat(new Date()),
 		created_at: new Date()
 	})
 
-	if (saveTopup.length < 1) {
+	if (Object.keys(saveTopup[0]).length < 1) {
 		return res.status(408).json({
 			status: res.statusCode,
 			method: req.method,
@@ -62,7 +55,7 @@ export const createTopup = (req: Request, res: Response): Promise<Response<any>>
 		})
 	}
 
-	const template: ITopupMail = tempMailTopup(findUser[0].email, amount)
+	const template: ITopupMail = tempMailTopup(findUser[0].email, topup_amount)
 	const sgResponse: [ClientResponse, any] = await sgMail.send(template)
 
 	if (!sgResponse) {

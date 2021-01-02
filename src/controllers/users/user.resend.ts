@@ -34,7 +34,7 @@ export const resend = async (req: Request, res: Response): Promise<Response<any>
 	}
 
 	const { user_id, email }: UsersDTO = findUser[0]
-	const token: string = encodedJwt({ user_id, email }, { expiresIn: '5m' })
+	const token: string = encodedJwt({ user_id: user_id, email: email }, { expiresIn: '5m' })
 	const template: IResendMail = tempMailResend(email, token)
 
 	const sgResponse: [ClientResponse, any] = await sgMail.send(template)

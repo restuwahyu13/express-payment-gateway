@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import knex from '../../database'
-import { TopupsDTO } from '../../dto/topups'
+import { SaldoDTO } from '../../dto/saldo'
 
-export const deleteTopup = (req: Request, res: Response): Promise<Response<any>> => {
+export const deleteSaldo = async (req: Request, res: Response): Promise<Response<any>> => {
 	return res.status(200).json({
 		status: res.statusCode,
 		method: req.method,

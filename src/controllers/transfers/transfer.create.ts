@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
 import knex from '../../database'
-import { TopupsDTO } from '../../dto/topups'
+import { TransferDTO } from '../../dto/transfer'
 
-export const createTransfer = (req: Request, res: Response): Promise<Response<any>> => {
+export const createTransfer = async (req: Request, res: Response): Promise<Response<any>> => {
 	return res.status(200).json({
 		status: res.statusCode,
 		method: req.method,

@@ -23,7 +23,7 @@ gh: ${ACTION}
 %.o:
 	${GIT} add .
 ifdef msg
-	${GIT} commit -m ${with_spaces msg}
+	${GIT} commit -m ${msg}
 endif
 	${GIT} push origin master
 ```

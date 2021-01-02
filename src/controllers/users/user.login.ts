@@ -26,7 +26,7 @@ export const login = async (req: Request, res: Response): Promise<Response<any>>
 	}
 
 	const { user_id, email, password }: UsersDTO = findUser[0]
-	const token: string = encodedJwt({ user_id, email }, { expiresIn: '1d' })
+	const token: string = encodedJwt({ user_id: user_id, email: email }, { expiresIn: '1d' })
 
 	verifyPassword(
 		req.body.password,
@@ -51,13 +51,13 @@ export const login = async (req: Request, res: Response): Promise<Response<any>>
 			await knex<LogsDTO>('logs').insert({
 				user_id: user_id,
 				logs_status: 'STATUS_LOGIN',
-				logs_time: dateFormat(new Date()).format(),
+				logs_time: dateFormat(new Date()),
 				created_at: new Date()
 			})
 
 			const updateFirstLogin: number = await knex<UsersDTO>('users')
 				.where({ email })
-				.update({ first_login: dateFormat(new Date()).format() })
+				.update({ first_login: dateFormat(new Date()) })
 
 			if (updateFirstLogin > 0) {
 				return res.status(200).json({
