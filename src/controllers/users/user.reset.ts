@@ -1,14 +1,12 @@
 import { Request, Response } from 'express'
-import jwt from 'jsonwebtoken'
 import knex from '../../database'
 import { UsersDTO } from '../../dto/users'
-import { decodedJwt } from '../../utils/util.jwt'
+import { verifySignAccessToken } from '../../utils/util.jwt'
 import { hashPassword as encodePassword } from '../../utils/util.encrypt'
 
 export const reset = async (req: Request, res: Response): Promise<Response<any>> => {
 	try {
-		const accessToken: string = decodedJwt(req.params.token)
-		const { email }: string | any = jwt.verify(accessToken, process.env.JWT_SECRET)
+		const { email }: string = verifySignAccessToken()(req, res, req.params.token)
 
 		const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: email }).select('password')
 

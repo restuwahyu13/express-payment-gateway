@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import knex from '../../database'
 import { UsersDTO } from '../../dto/users'
-import { decodedJwt } from '../../utils/util.jwt'
+import { decodedJwt } from '../../utils/util.oldjwt'
 
 export const activation = async (req: Request, res: Response): Promise<Response<any>> => {
 	try {

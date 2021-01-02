@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import knex from '../../database'
 import { UsersDTO } from '../../dto/users'
 import { LogsDTO } from '../../dto/logs'
-import { encodedJwt } from '../../utils/util.jwt'
+import { signAccessToken } from '../../utils/util.jwt'
 import { verifyPassword } from '../../utils/util.encrypt'
 import { dateFormat } from '../../utils/util.date'
 
@@ -26,7 +26,7 @@ export const login = async (req: Request, res: Response): Promise<Response<any>>
 	}
 
 	const { user_id, email, password }: UsersDTO = findUser[0]
-	const token: string = encodedJwt({ user_id: user_id, email: email }, { expiresIn: '1d' })
+	const token: string = signAccessToken()(req, res, { user_id: user_id, email: email }, { expiresIn: '1d' })
 
 	verifyPassword(
 		req.body.password,

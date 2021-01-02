@@ -4,7 +4,7 @@ import sgMail from '@sendgrid/mail'
 import { ClientResponse } from '@sendgrid/client/src/response'
 import { UsersDTO } from '../../dto/users'
 import { tempMailReset } from '../../templates/template.reset'
-import { encodedJwt } from '../../utils/util.jwt'
+import { signAccessToken } from '../../utils/util.jwt'
 sgMail.setApiKey(process.env.SG_SECRET)
 
 export const forgot = async (req: Request, res: Response): Promise<Response<any>> => {
@@ -34,7 +34,7 @@ export const forgot = async (req: Request, res: Response): Promise<Response<any>
 	}
 
 	const { user_id, email }: UsersDTO = findUser[0]
-	const token: string = encodedJwt({ user_id: user_id, email: email }, { expiresIn: '1d' })
+	const token: string = signAccessToken()({ user_id: user_id, email: email }, { expiresIn: '1d' })
 	const template: IResetMail = tempMailReset(email, token)
 
 	const sgResponse: [ClientResponse, any] = await sgMail.send(template)

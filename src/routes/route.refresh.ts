@@ -1,6 +1,6 @@
 import express, { Router, Request, Response } from 'express'
 import { authJwt } from '../middlewares/middleware.auth'
-import { signAccessToken, signRefreshToken } from '../utils/util.refereshToken'
+import { signAccessToken, signRefreshToken } from '../utils/util.jwt'
 
 const router: Router = express.Router()
 
