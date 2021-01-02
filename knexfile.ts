@@ -18,8 +18,8 @@ export default {
 			directory: resolve('src/database/seeds/')
 		},
 		log: {
-			error: (msg) => console.error(msg),
-			warn: (msg) => console.error(msg)
+			error: (msg: string | any): void => console.error(msg),
+			warn: (msg: string | any): void => console.error(msg)
 		}
 	},
 	production: {

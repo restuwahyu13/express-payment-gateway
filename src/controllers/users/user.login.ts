@@ -26,7 +26,7 @@ export const login = async (req: Request, res: Response): Promise<Response<any>>
 	}
 
 	const { user_id, email, password }: UsersDTO = findUser[0]
-	const token: string = signAccessToken()(req, res, { user_id: user_id, email: email }, { expiresIn: '1d' })
+	const token: string | any = signAccessToken()(req, res, { user_id: user_id, email: email }, { expiresIn: '1d' })
 
 	verifyPassword(
 		req.body.password,
