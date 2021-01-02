@@ -1,11 +1,14 @@
-################################
-####	APP TERITORY
-################################
-dev: #application winth env development
-	npm run dev
+#################################
+### APPLICATION BUILD AND DEV
+#################################
 
-prod: #application application to production
-	npm run build
+NPM := npm
+
+dev: #application with env development
+	${NPM} run dev
+
+prod: #application with env production
+	${NPM} run build
 
 ###############################
 ### SIMPLE GIT AUTOMATION
@@ -13,6 +16,7 @@ prod: #application application to production
 
 GIT := git
 ACTION = add.o commit.o push.o
+
 gh: ${ACTION}
 
 %.o:
