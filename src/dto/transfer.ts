@@ -1,17 +1,19 @@
 interface ITransfer {
-	readonly transfer_id?: number
-	readonly from_user_id: number
-	readonly to_user_id: number
-	readonly amount: number
-	readonly created_at?: any
-	readonly updated_at?: any
+	readonly transfer_id: number
+	readonly transfer_from: number
+	readonly transfer_to: number
+	readonly transfer_amount: number
+	readonly transfer_time: Date
+	readonly created_at: Date
+	readonly updated_at: Date
 }
 
 export class TransferDTO implements ITransfer {
-	readonly transfer_id?: number
-	readonly from_user_id: number
-	readonly to_user_id: number
-	readonly amount: number
-	readonly created_at?: any
-	readonly updated_at?: any
+	readonly transfer_id: number
+	readonly transfer_from: number
+	readonly transfer_to: number
+	readonly transfer_amount: number
+	readonly transfer_time: Date
+	readonly created_at: Date
+	readonly updated_at: Date
 }

@@ -1,19 +1,21 @@
 interface ITopups {
-	readonly topup_id?: number
-	readonly user_id?: number
-	readonly no_payment?: string
-	readonly amount?: number
-	readonly payment_method?: string
-	readonly created_at?: any
-	readonly updated_at?: any
+	readonly topup_id: number
+	readonly user_id: number
+	readonly topup_no: string
+	readonly topup_amount: number
+	readonly topup_method: string
+	readonly topup_time: Date
+	readonly created_at: Date
+	readonly updated_at: Date
 }
 
 export class TopupsDTO implements ITopups {
-	readonly topup_id?: number
-	readonly user_id?: number
-	readonly no_payment?: string
-	readonly amount?: number
-	readonly payment_method?: string
-	readonly created_at?: any
-	readonly updated_at?: any
+	readonly topup_id: number
+	readonly user_id: number
+	readonly topup_no: string
+	readonly topup_amount: number
+	readonly topup_method: string
+	readonly topup_time: Date
+	readonly created_at: Date
+	readonly updated_at: Date
 }

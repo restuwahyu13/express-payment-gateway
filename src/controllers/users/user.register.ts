@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
-import knex from '../../database'
 import sgMail from '@sendgrid/mail'
 import { ClientResponse } from '@sendgrid/client/src/response'
+import knex from '../../database'
 import { UsersDTO } from '../../dto/users'
 import { hashPassword } from '../../utils/util.encrypt'
 import { encodedJwt } from '../../utils/util.jwt'
@@ -25,14 +25,13 @@ export const register = async (req: Request, res: Response): Promise<Response<an
 		})
 	}
 
-	const saveUser: UsersDTO[] = await knex<UsersDTO>('users').insert(
-		{
+	const saveUser: UsersDTO[] = await knex<UsersDTO>('users')
+		.insert({
 			email: req.body.email,
 			password: hashPassword(req.body.password),
 			created_at: new Date()
-		},
-		'*'
-	)
+		})
+		.returning(['user_id', 'email'])
 
 	if (!saveUser[0]) {
 		return res.status(400).json({

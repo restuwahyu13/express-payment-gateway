@@ -8,7 +8,7 @@ interface IRegisterMail {
 }
 
 export const tempMailRegister = (to: string, token: string): IRegisterMail => ({
-	from: 'codingstreetart@stack.com',
+	from: 'admin@bfintech.com',
 	to: to,
 	subject: 'Email Activation Account',
 	html: `
@@ -144,7 +144,7 @@ export const tempMailRegister = (to: string, token: string): IRegisterMail => ({
         <div class="container">
             <div class="card">
                 <div class="logo">
-                    <h4><a href="">Coding Street Art</a></h4>
+                    <h4><a href="">Barbar Fintech Company</a></h4>
                 </div>
                 <div class="card-body">
                     <p class="card-title"><strong>Hello Dear ${to}</strong></p>
@@ -155,7 +155,7 @@ export const tempMailRegister = (to: string, token: string): IRegisterMail => ({
                       <a href="${CLIENT_URL}/api/v1/users/activation/${token}">Activation Account</a>
                     </button>
                     <div class="footer-logo">
-                        <span class="footer">&copy; 2020 Coding Street Art, Inc All Right Reserved</span>
+                        <span class="footer">&copy; 2021 Barbar Fintech Company, Inc All Right Reserved</span>
                         </div>
                     </div>
                 </div>

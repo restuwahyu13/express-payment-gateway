@@ -33,6 +33,7 @@
 		"js-base64": "^3.6.0",
 		"jsonwebtoken": "^8.5.1",
 		"knex": "^0.21.15",
+		"moment": "^2.29.1",
 		"multer": "^1.4.2",
 		"pg": "^8.5.1",
 		"uuid": "^8.3.2"
@@ -49,6 +50,7 @@
 		"@types/js-base64": "^3.0.0",
 		"@types/jsonwebtoken": "^8.5.0",
 		"@types/knex": "^0.16.1",
+		"@types/moment": "^2.13.0",
 		"@types/morgan": "^1.9.2",
 		"@types/multer": "^1.4.5",
 		"@types/node": "^14.14.16",

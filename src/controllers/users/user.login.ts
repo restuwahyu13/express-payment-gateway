@@ -4,6 +4,7 @@ import { UsersDTO } from '../../dto/users'
 import { LogsDTO } from '../../dto/logs'
 import { encodedJwt } from '../../utils/util.jwt'
 import { verifyPassword } from '../../utils/util.encrypt'
+import { dateFormat } from '../../utils/util.date'
 
 export const login = async (req: Request, res: Response): Promise<Response<any>> => {
 	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: req.body.email }).select()
@@ -47,10 +48,16 @@ export const login = async (req: Request, res: Response): Promise<Response<any>>
 				})
 			}
 
-			await knex<LogsDTO>('logs').insert({ user_id: user_id, status: 'STATUS_LOGIN', created_at: new Date() })
+			await knex<LogsDTO>('logs').insert({
+				user_id: user_id,
+				logs_status: 'STATUS_LOGIN',
+				logs_time: dateFormat(new Date()).format(),
+				created_at: new Date()
+			})
+
 			const updateFirstLogin: number = await knex<UsersDTO>('users')
 				.where({ email })
-				.update({ first_login: new Date() })
+				.update({ first_login: dateFormat(new Date()).format() })
 
 			if (updateFirstLogin > 0) {
 				return res.status(200).json({

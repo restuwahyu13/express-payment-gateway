@@ -1,17 +1,19 @@
+import { dateFormat } from '../utils/util.date'
+
 const CLIENT_URL = process.env.NODE_ENV !== 'production' ? process.env.URL_DEV : process.env.URL_PROD
 
-interface IResetMail {
+interface ITopupMail {
 	from: string
 	to: string
 	subject: string
 	html: string
 }
 
-export const tempMailReset = (to: string, token: string): IResetMail => {
+export const tempMailTopup = (to: string, amount: number): ITopupMail => {
 	return {
 		from: 'admin@bfintech.com',
 		to: to,
-		subject: 'Confirmation Reset Password',
+		subject: 'Top up Balance Successfuly',
 		html: `
         <!DOCTYPE html>
         <html lang="en">
@@ -41,7 +43,7 @@ export const tempMailReset = (to: string, token: string): IResetMail => {
                     top: 30px;
                 }
                 .container .logo {
-                    background: red;
+                    background: blue;
                     width: 360px;
                     height: 40px;
                     border-radius: 10px;
@@ -83,12 +85,16 @@ export const tempMailReset = (to: string, token: string): IResetMail => {
                     outline: none;
                     box-shadow: none;
                     font-size: 15px;
-                }
+								}
+								ul li {
+									list-style: none;
+									display: block;
+								}
                 button {
                     width: 150px;
                     height: 50px;
                     border-radius: 10px;
-                    background: red;
+                    background: blue;
                     position: relative;
                     top: 10px;
                     font-weight: bold;
@@ -103,7 +109,7 @@ export const tempMailReset = (to: string, token: string): IResetMail => {
                     top: 55px;
                 }
                 .footer-logo{
-                    background: red;
+                    background: blue;
                     color: #f5f5f5;
                     width: 360px;
                     height: 40px;
@@ -126,18 +132,30 @@ export const tempMailReset = (to: string, token: string): IResetMail => {
         <div class="container">
             <div class="card">
                 <div class="logo">
-								  <h4><a href="">Barbar Fintech Company</a></h4>
+                    <h4><a href="">Barbar Fintech Company</a></h4>
                 </div>
                 <div class="card-body">
                     <p class="card-title"><strong>Hello Dear ${to}</strong></p>
-                        <p class="card-subtitle"><strong>Kepada user YTH </strong>Berikut adalah konfirmasi pemulihan account anda:
+                        <p class="card-subtitle"><strong>Kepada user YTH </strong>Berikut adalah bukti ticket topup anda:
                     </p>
-                <div class="text-content">
-                        <button>
-                        <a href="${CLIENT_URL}/user/reset-password/${token}">Reset Password</a>
-                    </button>
+									<div class="text-content">
+									  <h4>Topup Balance Successfully</h4>
+										<p>
+										  selamat <b>${to}</b> anda telah berhasil melakukan topup saldo sebesar <b>Rp.${amount}</b>
+										</p>
+										 <ul>
+											<li>
+												Penerima: ${to}
+											</li>
+											<li>
+												Balance: Rp.${amount}
+											</li>
+											 <li>
+											  Tanggal: ${dateFormat(new Date()).format()}
+											 </li>
+										 </ul>
                     <div class="footer-logo">
-												<span class="footer">&copy; 2021 Barbar Fintech, Inc All Right Reserved</span>
+                        <span class="footer">&copy; 2021 Barbar Fintech, Inc All Right Reserved</span>
                         </div>
                     </div>
                 </div>
