@@ -34,19 +34,19 @@ export const resultsTopup = async (req: Request, res: Response): Promise<Respons
 	const newTopupData = findAllTopup.map(
 		(val): IUserTopup => {
 			return {
-				userData: {
-					user_id: val.user_id,
-					email: val.email,
-					photoProfile: val.photo,
-					kode_transfer: val.noc_transfer,
-					pertama_login: dateFormat(val.first_login).format('llll'),
-					terakhir_login: val.last_login,
-					userTopup: {
-						topup_id: val.topup_id,
-						nomor_topup: val.topup_no,
-						jumlah_topup: rupiahFormatter(val.topup_amount.toString()),
-						metodePembayaran_topup: val.topup_method,
-						waktu_topup: dateFormat(val.topup_time).format('llll')
+				userTopup: {
+					topup_id: val.topup_id,
+					nomor_topup: val.topup_no,
+					jumlah_topup: rupiahFormatter(val.topup_amount.toString()),
+					metodePembayaran_topup: val.topup_method,
+					waktu_topup: dateFormat(val.topup_time).format('llll'),
+					userData: {
+						user_id: val.user_id,
+						email: val.email,
+						photoProfile: val.photo,
+						kode_transfer: val.noc_transfer,
+						pertama_login: dateFormat(val.first_login).format('llll'),
+						terakhir_login: val.last_login
 					}
 				}
 			}

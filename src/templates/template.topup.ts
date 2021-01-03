@@ -8,7 +8,7 @@ interface ITopupMail {
 	html: string
 }
 
-export const tempMailTopup = (to: string, amount: number): ITopupMail => {
+export const tempMailTopup = (to: string, method: string, amount: number): ITopupMail => {
 	return {
 		from: 'admin@bfintech.com',
 		to: to,
@@ -141,7 +141,7 @@ nter;
 									<div class="text-content">
 									  <h4>Topup Balance Berhasil</h4>
 										<p>
-										  Selamat <b>${to}</b> anda telah berhasil melakukan topup saldo sebesar <b>Rp.${amount}</b>
+										  Selamat <b>${to}</b> anda telah berhasil melakukan topup saldo sebesar <b>${rupiahFormatter(amount.toString())}</b>
 										</p>
 										 <ul>
 											<li>
@@ -149,6 +149,9 @@ nter;
 											</li>
 											<li>
 												<b>Balance</b>: ${rupiahFormatter(amount.toString())}
+											</li>
+											<li>
+											  <b>Payment</b>: ${method}
 											</li>
 											 <li>
 											  <b>Tanggal</b>: ${dateFormat(new Date()).format('lll')}
