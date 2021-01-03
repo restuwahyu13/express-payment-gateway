@@ -7,16 +7,10 @@ import { hashPassword } from '../../utils/util.encrypt'
 import { signAccessToken } from '../../utils/util.jwt'
 import { tempMailRegister } from '../../templates/template.register'
 import { randomVCC } from '../../utils/util.randomVcc'
+import { IRegisterMail } from '../../interface/i.tempmail'
 sgMail.setApiKey(process.env.SG_SECRET)
 
 export const register = async (req: Request, res: Response): Promise<Response<any>> => {
-	interface IRegisterMail {
-		readonly from: string
-		readonly to: string
-		readonly subject: string
-		readonly html: string
-	}
-
 	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: req.body.email }).select('*')
 	if (findUser.length > 0) {
 		return res.status(409).json({

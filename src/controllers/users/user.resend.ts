@@ -5,16 +5,10 @@ import { ClientResponse } from '@sendgrid/client/src/response'
 import { UsersDTO } from '../../dto/dto.users'
 import { tempMailResend } from '../../templates/template.resend'
 import { signAccessToken } from '../../utils/util.jwt'
+import { IResendMail } from '../../interface/i.tempmail'
 sgMail.setApiKey(process.env.SG_SECRET)
 
 export const resend = async (req: Request, res: Response): Promise<Response<any>> => {
-	interface IResendMail {
-		from: string
-		to: string
-		subject: string
-		html: string
-	}
-
 	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: req.body.email }).select()
 
 	if (findUser.length < 1) {

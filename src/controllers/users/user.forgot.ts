@@ -5,16 +5,10 @@ import { ClientResponse } from '@sendgrid/client/src/response'
 import { UsersDTO } from '../../dto/dto.users'
 import { tempMailReset } from '../../templates/template.reset'
 import { signAccessToken } from '../../utils/util.jwt'
+import { IResetMail } from '../../interface/i.tempmail'
 sgMail.setApiKey(process.env.SG_SECRET)
 
 export const forgot = async (req: Request, res: Response): Promise<Response<any>> => {
-	interface IResetMail {
-		from: string
-		to: string
-		subject: string
-		html: string
-	}
-
 	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: req.body.email }).select()
 
 	if (findUser.length < 1) {

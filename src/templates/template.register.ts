@@ -1,11 +1,6 @@
-const CLIENT_URL = process.env.NODE_ENV !== 'production' ? process.env.URL_DEV : process.env.URL_PROD
+import { IRegisterMail } from '../interface/i.tempmail'
 
-interface IRegisterMail {
-	from: string
-	to: string
-	subject: string
-	html: string
-}
+const CLIENT_URL = process.env.NODE_ENV !== 'production' ? process.env.URL_DEV : process.env.URL_PROD
 
 export const tempMailRegister = (to: string, token: string): IRegisterMail => ({
 	from: 'admin@bfintech.com',

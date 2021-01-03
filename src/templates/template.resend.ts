@@ -1,11 +1,6 @@
-const CLIENT_URL = process.env.NODE_ENV !== 'production' ? process.env.URL_DEV : process.env.URL_PROD
+import { IResendMail } from '../interface/i.tempmail'
 
-interface IResendMail {
-	from: string
-	to: string
-	subject: string
-	html: string
-}
+const CLIENT_URL = process.env.NODE_ENV !== 'production' ? process.env.URL_DEV : process.env.URL_PROD
 
 export const tempMailResend = (to: string, token: string): IResendMail => {
 	return {

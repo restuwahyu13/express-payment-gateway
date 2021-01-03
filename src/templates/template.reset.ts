@@ -1,11 +1,6 @@
-const CLIENT_URL = process.env.NODE_ENV !== 'production' ? process.env.URL_DEV : process.env.URL_PROD
+import { IResetMail } from '../interface/i.tempmail'
 
-interface IResetMail {
-	from: string
-	to: string
-	subject: string
-	html: string
-}
+const CLIENT_URL = process.env.NODE_ENV !== 'production' ? process.env.URL_DEV : process.env.URL_PROD
 
 export const tempMailReset = (to: string, token: string): IResetMail => {
 	return {

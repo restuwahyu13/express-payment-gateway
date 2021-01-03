@@ -9,7 +9,7 @@ export async function up(knex: Knex): Promise<Knex.SchemaBuilder> {
 		table.boolean('active').defaultTo(false)
 		table.string('role').defaultTo('user')
 		table.bigInteger('noc_transfer').notNullable().defaultTo(0)
-		table.dateTime('first_login').notNullable()
+		table.dateTime('first_login').defaultTo(null)
 		table.dateTime('last_login').defaultTo(null)
 		table.timestamp('created_at').defaultTo(null)
 		table.timestamp('updated_at').defaultTo(null)
