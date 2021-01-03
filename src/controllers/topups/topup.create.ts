@@ -5,7 +5,7 @@ import knex from '../../database'
 import { TopupsDTO } from '../../dto/topups'
 import { SaldoDTO } from '../../dto/saldo'
 import { LogsDTO } from '../../dto/logs'
-import { uuid } from '../../utils/util.uuid'
+import { uniqueOrderNumber } from '../../utils/util.uuid'
 import { UsersDTO } from './../../dto/users'
 import { tempMailTopup } from '../../templates/template.topup'
 import { dateFormat } from '../../utils/util.date'
@@ -21,7 +21,7 @@ export const createTopup = async (req: Request, res: Response): Promise<Response
 	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ user_id: req.body.user_id })
 
 	if (findUser.length < 1) {
-		return res.status(408).json({
+		return res.status(400).json({
 			status: res.statusCode,
 			method: req.method,
 			message: 'top up balance failed, user_id is not exist in the system'
@@ -31,17 +31,18 @@ export const createTopup = async (req: Request, res: Response): Promise<Response
 	const saveTopup: TopupsDTO[] = await knex<TopupsDTO>('topups')
 		.insert({
 			user_id: findUser[0].user_id,
-			topup_no: uuid(),
+			topup_no: uniqueOrderNumber(),
 			topup_amount: req.body.topup_amount,
+			topup_method: req.body.topup_method,
 			topup_time: dateFormat(new Date()),
 			created_at: new Date()
 		})
-		.returning(['topup_id', 'amount'])
+		.returning(['topup_id', 'user_id', 'topup_amount'])
 
 	const { topup_id, user_id, topup_amount }: TopupsDTO = saveTopup[0]
-	await knex<SaldoDTO>('saldo').insert({ topup_id: topup_id, topup_amount: topup_amount })
+	await knex<SaldoDTO>('saldo').insert({ topup_id: topup_id, balance: topup_amount, created_at: new Date() })
 	await knex<LogsDTO>('logs').insert({
-		user_id,
+		user_id: user_id,
 		logs_status: 'TOPUP_BALANCE',
 		logs_time: dateFormat(new Date()),
 		created_at: new Date()
@@ -62,7 +63,7 @@ export const createTopup = async (req: Request, res: Response): Promise<Response
 		return res.status(500).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'Server error failed to sending email activation'
+			message: 'Server error failed to sending email confirmation topup'
 		})
 	}
 

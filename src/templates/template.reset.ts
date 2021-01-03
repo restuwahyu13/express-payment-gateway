@@ -137,8 +137,8 @@ export const tempMailReset = (to: string, token: string): IResetMail => {
                         <a href="${CLIENT_URL}/user/reset-password/${token}">Reset Password</a>
                     </button>
                     <div class="footer-logo">
-												<span class="footer">&copy; 2021 Barbar Fintech, Inc All Right Reserved</span>
-                        </div>
+										<span class="footer">&copy; ${new Date().getFullYear()} Barbar Fintech, Inc All Right Reserved</span>
+                     </div>
                     </div>
                 </div>
             </div>

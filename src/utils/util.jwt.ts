@@ -35,7 +35,7 @@ export const signAccessToken = () => (
 	}
 }
 
-export const verifySignAccessToken = () => (req: Request, res: Response, token: string): string | any => {
+export const verifySignAccessToken = () => (token: string): string | any => {
 	if (!Base64.isValid(token)) {
 		message({
 			response: res,
@@ -46,7 +46,6 @@ export const verifySignAccessToken = () => (req: Request, res: Response, token: 
 	}
 	const decodedToken: string = Base64.decode(token)
 	const decoded: string | any = jwt.verify(decodedToken, ACCESS_TOKEN_SECRET)
-	console.log(decoded)
 	return decoded
 }
 

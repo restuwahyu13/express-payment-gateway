@@ -139,23 +139,23 @@ export const tempMailTopup = (to: string, amount: number): ITopupMail => {
                         <p class="card-subtitle"><strong>Kepada user YTH </strong>Berikut adalah bukti ticket topup anda:
                     </p>
 									<div class="text-content">
-									  <h4>Topup Balance Successfully</h4>
+									  <h4>Topup Balance Berhasil</h4>
 										<p>
-										  selamat <b>${to}</b> anda telah berhasil melakukan topup saldo sebesar <b>Rp.${amount}</b>
+										  Selamat <b>${to}</b> anda telah berhasil melakukan topup saldo sebesar <b>Rp.${amount}</b>
 										</p>
 										 <ul>
 											<li>
-												Penerima: ${to}
+												<b>Penerima</b>: ${to}
 											</li>
 											<li>
-												Balance: Rp.${amount}
+												<b>Balance</b>: Rp.${amount}
 											</li>
 											 <li>
-											  Tanggal: ${dateFormat(new Date()).format()}
+											  <b>Tanggal</b>: ${dateFormat(new Date()).format('lll')}
 											 </li>
 										 </ul>
                     <div class="footer-logo">
-                        <span class="footer">&copy; 2021 Barbar Fintech, Inc All Right Reserved</span>
+                        <span class="footer">&copy; ${new Date().getFullYear()} Barbar Fintech, Inc All Right Reserved</span>
                         </div>
                     </div>
                 </div>
