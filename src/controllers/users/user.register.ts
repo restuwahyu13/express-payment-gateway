@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import sgMail from '@sendgrid/mail'
 import { ClientResponse } from '@sendgrid/client/src/response'
 import knex from '../../database'
-import { UsersDTO } from '../../dto/users'
+import { UsersDTO } from '../../dto/dto.users'
 import { hashPassword } from '../../utils/util.encrypt'
 import { signAccessToken } from '../../utils/util.jwt'
 import { tempMailRegister } from '../../templates/template.register'
@@ -11,10 +11,10 @@ sgMail.setApiKey(process.env.SG_SECRET)
 
 export const register = async (req: Request, res: Response): Promise<Response<any>> => {
 	interface IRegisterMail {
-		from: string
-		to: string
-		subject: string
-		html: string
+		readonly from: string
+		readonly to: string
+		readonly subject: string
+		readonly html: string
 	}
 
 	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: req.body.email }).select('*')

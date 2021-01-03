@@ -1,10 +1,12 @@
 import { Request, Response } from 'express'
 import knex from '../../database'
-import { TopupsDTO } from '../../dto/topups'
+import { TopupsDTO } from '../../dto/dto.topups'
+import { UsersDTO } from '../../dto/dto.users'
 import { dateFormat } from '../../utils/util.date'
+import { IAllUserTopup, IUserTopup } from '../../interface/i.topup'
 
 export const resultTopup = async (req: Request, res: Response): Promise<Response<any>> => {
-	const findTopup = await knex<TopupsDTO>('topups')
+	const findTopup: IAllUserTopup[] = await knex<UsersDTO, TopupsDTO>('topups')
 		.join('users', 'topups.user_id', 'users.user_id')
 		.select([
 			'users.user_id',
@@ -29,25 +31,27 @@ export const resultTopup = async (req: Request, res: Response): Promise<Response
 		})
 	}
 
-	const newTopupData = findTopup.map((val): any[] => {
-		return {
-			userData: {
-				user_id: val.user_id,
-				email: val.email,
-				photoProfile: val.photo,
-				kode_transfer: val.noc_transfer,
-				pertama_login: dateFormat(val.first_login).format('llll'),
-				terakhir_login: val.last_login,
-				userTopup: {
-					topup_id: val.topup_id,
-					nomor_topup: val.topup_no,
-					jumlah_topup: val.topup_amount,
-					metodePembayaran_topup: val.topup_method,
-					waktu_topup: dateFormat(val.topup_time).format('llll')
+	const newTopupData = findTopup.map(
+		(val): IUserTopup => {
+			return {
+				userData: {
+					user_id: val.user_id,
+					email: val.email,
+					photoProfile: val.photo,
+					kode_transfer: val.noc_transfer,
+					pertama_login: dateFormat(val.first_login).format('llll'),
+					terakhir_login: val.last_login,
+					userTopup: {
+						topup_id: val.topup_id,
+						nomor_topup: val.topup_no,
+						jumlah_topup: val.topup_amount,
+						metodePembayaran_topup: val.topup_method,
+						waktu_topup: dateFormat(val.topup_time).format('llll')
+					}
 				}
 			}
 		}
-	})
+	)
 
 	return res.status(200).json({
 		status: res.statusCode,

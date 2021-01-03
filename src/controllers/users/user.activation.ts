@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import knex from '../../database'
-import { UsersDTO } from '../../dto/users'
+import { UsersDTO } from '../../dto/dto.users'
 import { verifySignAccessToken } from '../../utils/util.jwt'
 
 export const activation = async (req: Request, res: Response): Promise<Response<any>> => {

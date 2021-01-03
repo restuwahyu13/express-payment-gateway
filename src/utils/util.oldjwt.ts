@@ -1,6 +1,6 @@
 import jwt, { SignOptions, Secret } from 'jsonwebtoken'
 import { isValid, Base64 } from 'js-base64'
-import { UsersDTO } from '../dto/users'
+import { UsersDTO } from '../dto/dto.users'
 
 const jwtSecret: Secret = process.env.JWT_SECRET
 

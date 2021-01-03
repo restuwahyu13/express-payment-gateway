@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import knex from '../../database'
-import { UsersDTO } from '../../dto/users'
+import { UsersDTO } from '../../dto/dto.users'
 import { verifySignAccessToken } from '../../utils/util.jwt'
 import { hashPassword as encodePassword } from '../../utils/util.encrypt'
 

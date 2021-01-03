@@ -1,6 +1,6 @@
 import { Request, Response } from 'express'
 import knex from '../../database'
-import { SaldoDTO } from '../../dto/saldo'
+import { SaldoDTO } from '../../dto/dto.saldo'
 
 export const updateSaldo = async (req: Request, res: Response): Promise<Response<any>> => {
 	return res.status(200).json({

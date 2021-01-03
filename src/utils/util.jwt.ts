@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import jwt, { Secret, SignOptions } from 'jsonwebtoken'
 import { Base64 } from 'js-base64'
-import { UsersDTO } from '../dto/users'
+import { UsersDTO } from '../dto/dto.users'
 import { message } from './util.message'
 
 const ACCESS_TOKEN_SECRET: Secret = process.env.ACCESS_TOKEN_SECRET
@@ -35,7 +35,7 @@ export const signAccessToken = () => (
 	}
 }
 
-export const verifySignAccessToken = () => (token: string): string | any => {
+export const verifySignAccessToken = () => (req: Request, res: Response, token: string): string | any => {
 	if (!Base64.isValid(token)) {
 		message({
 			response: res,

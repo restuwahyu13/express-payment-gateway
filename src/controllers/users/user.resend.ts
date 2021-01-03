@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import knex from '../../database'
 import sgMail from '@sendgrid/mail'
 import { ClientResponse } from '@sendgrid/client/src/response'
-import { UsersDTO } from '../../dto/users'
+import { UsersDTO } from '../../dto/dto.users'
 import { tempMailResend } from '../../templates/template.resend'
 import { signAccessToken } from '../../utils/util.jwt'
 sgMail.setApiKey(process.env.SG_SECRET)
