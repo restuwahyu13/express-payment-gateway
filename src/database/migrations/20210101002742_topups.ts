@@ -3,7 +3,13 @@ import * as Knex from 'knex'
 export async function up(knex: Knex): Promise<Knex.SchemaBuilder> {
 	await knex.schema.createTable('topups', (table: Knex.TableBuilder) => {
 		table.increments('topup_id').primary()
-		table.integer('user_id').references('user_id').inTable('users').onDelete('CASCADE').onUpdate('CASCADE')
+		table
+			.integer('user_id')
+			.references('user_id')
+			.inTable('users')
+			.onDelete('CASCADE')
+			.onUpdate('CASCADE')
+			.notNullable()
 		table.string('topup_no').notNullable()
 		table.bigInteger('topup_amount').notNullable()
 		table.string('topup_method').notNullable()

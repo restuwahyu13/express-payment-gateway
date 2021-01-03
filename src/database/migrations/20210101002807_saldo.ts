@@ -4,7 +4,7 @@ export async function up(knex: Knex): Promise<Knex.SchemaBuilder> {
 	await knex.schema.createTable('saldo', (table: Knex.TableBuilder) => {
 		table.increments('saldo_id').primary()
 		table.integer('topup_id').references('topup_id').inTable('topups').onDelete('CASCADE').onUpdate('CASCADE')
-		table.bigInteger('balance').notNullable().defaultTo(0)
+		table.bigInteger('balance').notNullable()
 		table.bigInteger('withdraw').defaultTo(0)
 		table.dateTime('withdraw_time').defaultTo(null)
 		table.timestamp('created_at').defaultTo(null)

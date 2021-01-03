@@ -9,15 +9,9 @@ import { uniqueOrderNumber } from '../../utils/util.uuid'
 import { UsersDTO } from '../../dto/dto.users'
 import { tempMailTopup } from '../../templates/template.topup'
 import { dateFormat } from '../../utils/util.date'
+import { ITopupMail } from '../../interface/i.tempmail'
 
 export const createTopup = async (req: Request, res: Response): Promise<Response<any>> => {
-	interface ITopupMail {
-		from: string
-		to: string
-		subject: string
-		html: string
-	}
-
 	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ user_id: req.body.user_id })
 
 	if (findUser.length < 1) {
@@ -39,15 +33,6 @@ export const createTopup = async (req: Request, res: Response): Promise<Response
 		})
 		.returning(['topup_id', 'user_id', 'topup_amount'])
 
-	const { topup_id, user_id, topup_amount }: TopupsDTO = saveTopup[0]
-	await knex<SaldoDTO>('saldo').insert({ topup_id: topup_id, balance: topup_amount, created_at: new Date() })
-	await knex<LogsDTO>('logs').insert({
-		user_id: user_id,
-		logs_status: 'TOPUP_BALANCE',
-		logs_time: dateFormat(new Date()),
-		created_at: new Date()
-	})
-
 	if (Object.keys(saveTopup[0]).length < 1) {
 		return res.status(408).json({
 			status: res.statusCode,
@@ -55,6 +40,33 @@ export const createTopup = async (req: Request, res: Response): Promise<Response
 			message: 'top up balance failed, server is busy'
 		})
 	}
+
+	const checkTopupIdExist: SaldoDTO[] = await knex<SaldoDTO>('users')
+		.where({ topup_id: saveTopup[0].topup_id })
+		.select('topup_id')
+
+	if (checkTopupIdExist.length < 1) {
+		const { topup_id, topup_amount }: TopupsDTO = saveTopup[0]
+		await knex<SaldoDTO>('saldo').insert({ topup_id: topup_id, balance: topup_amount, created_at: new Date() })
+	} else {
+		const { topup_id }: SaldoDTO = checkTopupIdExist[0]
+
+		const findBalance: SaldoDTO[] = await knex<SaldoDTO>('saldo')
+			.where({ topup_id: topup_id })
+			.select(['saldo_id', 'balance'])
+
+		const { saldo_id, balance }: SaldoDTO = findBalance[0]
+		const addBalance = balance + saveTopup[0].topup_amount
+
+		await knex('saldo').where({ saldo_id: saldo_id }).update({ balance: addBalance, updated_at: new Date() })
+	}
+
+	await knex<LogsDTO>('logs').insert({
+		user_id: user_id,
+		logs_status: 'TOPUP_BALANCE',
+		logs_time: dateFormat(new Date()),
+		created_at: new Date()
+	})
 
 	const template: ITopupMail = tempMailTopup(findUser[0].email, topup_amount)
 	const sgResponse: [ClientResponse, any] = await sgMail.send(template)

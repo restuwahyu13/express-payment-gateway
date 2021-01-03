@@ -3,9 +3,29 @@ import knex from '../../database'
 import { TopupsDTO } from '../../dto/dto.topups'
 
 export const deleteTopup = async (req: Request, res: Response): Promise<Response<any>> => {
+	const findTopup: TopupsDTO[] = await knex<TopupsDTO>('topups').where({ topup_id: req.params.id }).select('topup_id')
+
+	if (findTopup.length < 1) {
+		return res.status(404).json({
+			status: res.statusCode,
+			method: req.method,
+			message: 'topup id is not exist, cannot delete data topup'
+		})
+	}
+
+	const deleteTopup: number = await knex<TopupsDTO>('knex').where({ topup_id: findTopup[0].topup_id }).delete()
+
+	if (deleteTopup < 1) {
+		return res.status(400).json({
+			status: res.statusCode,
+			method: req.method,
+			message: 'delete data topup failed, please try again'
+		})
+	}
+
 	return res.status(200).json({
 		status: res.statusCode,
 		method: req.method,
-		message: 'Hello Wordl'
+		message: 'delete data topup successfully'
 	})
 }

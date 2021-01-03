@@ -11,7 +11,7 @@ export async function up(knex: Knex): Promise<Knex.SchemaBuilder> {
 			.onUpdate('CASCADE')
 			.notNullable()
 		table.string('logs_status').notNullable()
-		table.dateTime('logs_time').defaultTo(null)
+		table.dateTime('logs_time').notNullable()
 		table.timestamp('created_at').defaultTo(null)
 	})
 }

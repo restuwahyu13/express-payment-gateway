@@ -3,10 +3,10 @@ import { transferController } from '../controllers/transfers'
 
 const router: Router = express.Router()
 
-router.post('/topup', transferController.createTransfer)
-router.get('/topup', transferController.resultsTransfer)
-router.get('/topup/:id', transferController.resultTransfer)
-router.delete('/topup/:id', transferController.deleteTransfer)
-router.put('/topup/:id', transferController.updateTransfer)
+router.post('/transfer', transferController.createTransfer)
+router.get('/transfer', transferController.resultsTransfer)
+router.get('/transfer/:id', transferController.resultTransfer)
+router.delete('/transfer/:id', transferController.deleteTransfer)
+router.put('/transfer/:id', transferController.updateTransfer)
 
 export default router
