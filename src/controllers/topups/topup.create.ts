@@ -61,6 +61,7 @@ export const createTopup = async (req: Request, res: Response): Promise<Response
 		await knex('saldo').where({ saldo_id: saldo_id }).update({ balance: addBalance, updated_at: new Date() })
 	}
 
+	const { user_id, topup_amount }: TopupsDTO = saveTopup[0]
 	await knex<LogsDTO>('logs').insert({
 		user_id: user_id,
 		logs_status: 'TOPUP_BALANCE',

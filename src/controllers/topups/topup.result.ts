@@ -3,6 +3,7 @@ import knex from '../../database'
 import { TopupsDTO } from '../../dto/dto.topups'
 import { UsersDTO } from '../../dto/dto.users'
 import { dateFormat } from '../../utils/util.date'
+import { rupiahFormatter } from '../../utils/util.rupiah'
 import { IAllUserTopup, IUserTopup } from '../../interface/i.topup'
 
 export const resultTopup = async (req: Request, res: Response): Promise<Response<any>> => {
@@ -44,7 +45,7 @@ export const resultTopup = async (req: Request, res: Response): Promise<Response
 					userTopup: {
 						topup_id: val.topup_id,
 						nomor_topup: val.topup_no,
-						jumlah_topup: val.topup_amount,
+						jumlah_topup: rupiahFormatter(val.topup_amount.toString()),
 						metodePembayaran_topup: val.topup_method,
 						waktu_topup: dateFormat(val.topup_time).format('llll')
 					}

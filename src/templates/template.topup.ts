@@ -1,6 +1,5 @@
 import { dateFormat } from '../utils/util.date'
-
-const CLIENT_URL = process.env.NODE_ENV !== 'production' ? process.env.URL_DEV : process.env.URL_PROD
+import { rupiahFormatter } from '../utils/util.rupiah'
 
 interface ITopupMail {
 	from: string
@@ -31,7 +30,8 @@ export const tempMailTopup = (to: string, amount: number): ITopupMail => {
                 .container {
                     position: relative !important;
                     margin: auto !important;
-                    text-align: center;
+                    text-align: ceimport { rupiahFormatter } from './../utils/util.rupiah';
+nter;
                     width: 650px;
                     height: 650px;
                     border-radius: 10px;
@@ -148,7 +148,7 @@ export const tempMailTopup = (to: string, amount: number): ITopupMail => {
 												<b>Penerima</b>: ${to}
 											</li>
 											<li>
-												<b>Balance</b>: Rp.${amount}
+												<b>Balance</b>: ${rupiahFormatter(amount.toString())}
 											</li>
 											 <li>
 											  <b>Tanggal</b>: ${dateFormat(new Date()).format('lll')}

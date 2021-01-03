@@ -7,7 +7,7 @@ export interface IAllUserTopup {
 	readonly last_login: any
 	readonly topup_id: number
 	readonly topup_no: number
-	readonly topup_amount: number
+	readonly topup_amount: string
 	readonly topup_method: string
 	readonly topup_time: any
 }
@@ -23,7 +23,7 @@ export interface IUserTopup {
 		readonly userTopup: {
 			readonly topup_id: number
 			readonly nomor_topup: number
-			readonly jumlah_topup: number
+			readonly jumlah_topup: string
 			readonly metodePembayaran_topup: string
 			readonly waktu_topup: string
 		}
