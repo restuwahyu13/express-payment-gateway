@@ -2,67 +2,71 @@ import { Request, Response } from 'express'
 import knex from '../../database'
 import { SaldoHistoryDTO } from '../../dto/dto.saldoHistory'
 import { TopupsDTO } from '../../dto/dto.topups'
+import { SaldoDTO } from '../../dto/dto.saldo'
 import { UsersDTO } from '../../dto/dto.users'
 import { rupiahFormatter } from '../../utils/util.rupiah'
-import { IFindBalanceHistory, IMergeUsers, INewUsers } from '../../interface/i.saldo'
+import { dateFormat } from '../../utils/util.date'
+import { IFindBalanceHistory, IFindBalance, INewBalanceUsers, INewFindBalanceHistory } from '../../interface/i.saldo'
 
 export const resultSaldo = async (req: Request, res: Response): Promise<Response<any>> => {
 	const findBalanceHistory: IFindBalanceHistory[] = await knex<SaldoHistoryDTO, TopupsDTO>('saldo_history')
 		.join('topups', 'topups.topup_id', 'saldo_history.topup_id')
-		.select(['topups.user_id'])
+		.select(['topups.user_id', 'topups.topup_method', 'saldo_history.balance', 'saldo_history.created_at'])
 		.where({ user_id: req.params.id })
-		.groupBy(['topups.user_id'])
-
-	// const findBalanceHistory: IFindBalanceHistory[] = await knex<SaldoHistoryDTO, TopupsDTO>('saldo_history')
-	// 	.join('topups', 'topups.topup_id', 'saldo.topup_id')
-	// 	.select([
-	// 		'topups.user_id',
-	// 		knex.raw('SUM(saldo.balance) as saldo_balance'),
-	// 		knex.raw('SUM(saldo.withdraw) as saldo_withdraw')
-	// 	])
-	// 	.where({ user_id: req.params.id })
-	// 	.groupBy(['topups.user_id'])
-	// 	.orderBy('topups.user_id', 'asc')
+		.groupBy(['topups.user_id', 'topups.topup_method', 'saldo_history.balance', 'saldo_history.created_at'])
+		.orderBy('created_at', 'desc')
 
 	if (findBalanceHistory.length < 1) {
 		return res.status(404).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'user id is not exist, failed to find saldo',
-			data: findBalanceHistory
+			message: 'user id is not exist, failed to find saldo'
 		})
 	}
 
-	// const findAllUserId = findBalanceHistory.map((val): number => val.user_id)
-	// const findUsers: UsersDTO[] = await knex<UsersDTO>('users')
-	// 	.select(['email', 'noc_transfer'])
-	// 	.whereIn('user_id', findAllUserId)
+	const findBalance: IFindBalance[] = await knex<SaldoDTO, UsersDTO>('saldo')
+		.join('users', 'users.user_id', 'saldo.user_id')
+		.select([
+			'users.user_id as saldo_user_id',
+			'users.email',
+			'users.noc_transfer',
+			'saldo.total_balance',
+			'saldo.withdraw_amount',
+			'saldo.withdraw_time',
+			'saldo.created_at as saldo_created'
+		])
+		.where({ 'users.user_id': findBalanceHistory[0].user_id })
 
-	// const mergeUsers = findUsers.map(
-	// 	(val, i): IMergeUsers => {
-	// 		const userMerge: IMergeUsers = Object.defineProperty(findBalanceHistory[i], 'data', {
-	// 			value: { email: val.email, noc_transfer: val.noc_transfer },
-	// 			enumerable: true,
-	// 			writable: true
-	// 		})
-	// 		return userMerge
-	// 	}
-	// )
+	const newFindBalanceHistory = findBalanceHistory.map(
+		(val): INewFindBalanceHistory => ({
+			user_id: val.user_id,
+			saldoTopup: rupiahFormatter(val.balance.toString()),
+			metodePembayaran: val.topup_method,
+			tanggalTopup: dateFormat(val.created_at).format('llll')
+		})
+	)
 
-	// const newUsers = mergeUsers.map(
-	// 	(val): INewUsers => ({
-	// 		user_id: val.user_id,
-	// 		email: val.data.email,
-	// 		kodeTransfer: val.data.noc_transfer,
-	// 		jumlahUang: rupiahFormatter(val.saldo_balance.toString()),
-	// 		jumlahPenarikan: rupiahFormatter(val.saldo_withdraw.toString())
-	// 	})
-	// )
+	const newBalanceUsers = findBalance.map(
+		(val): INewBalanceUsers => {
+			return {
+				reportSaldoUser: {
+					user_id: val.saldo_user_id,
+					email: val.email,
+					kodeTransfer: val.noc_transfer,
+					jumlahUang: rupiahFormatter(val.total_balance.toString()),
+					jumlahPenarikan: rupiahFormatter(val.withdraw_amount.toString()),
+					waktuPenarikan: dateFormat(val.withdraw_time).format('llll'),
+					historyTopupSaldo: newFindBalanceHistory,
+					tanggalPembuatan: dateFormat(val.saldo_created).format('llll')
+				}
+			}
+		}
+	)
 
 	return res.status(200).json({
 		status: res.statusCode,
 		method: req.method,
 		message: 'data already to use',
-		data: findBalanceHistory
+		data: newBalanceUsers[0]
 	})
 }

@@ -67,7 +67,6 @@ export const createTopup = async (req: Request, res: Response): Promise<Response
 			created_at: new Date()
 		})
 	} else {
-		console.log('tes 2')
 		const findBalanceHistory: IFindBalanceHistory[] = await knex<SaldoHistoryDTO, TopupsDTO>('saldo_history')
 			.join('topups', 'topups.topup_id', 'saldo_history.topup_id')
 			.select(['topups.user_id', knex.raw('SUM(saldo_history.balance) as total_balance')])
