@@ -15,7 +15,7 @@ import { IFindBalanceHistory } from '../../interface/i.saldo'
 
 export const createTopup = async (req: Request, res: Response): Promise<Response<any>> => {
 	if (req.body.topup_amount <= 49000) {
-		return res.status(400).json({
+		return res.status(403).json({
 			status: res.statusCode,
 			method: req.method,
 			message: 'mininum top up balance Rp 50.000'

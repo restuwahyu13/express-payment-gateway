@@ -11,7 +11,7 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 
 	const checkUserId: UsersDTO[] = await knex<UsersDTO>('users')
 		.whereIn('noc_transfer', [transfer_from, transfer_to])
-		.select(['user_id', 'email', 'noc_transfer'])
+		.select(['user_id'])
 
 	if (checkUserId.length < 1) {
 		return res.status(404).json({
@@ -22,8 +22,8 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 	}
 
 	const saveTransfer: TransferDTO[] = await knex<TransferDTO>('transfer').insert({
-		transfer_from: checkUserId[0],
-		transfer_to: checkUserId[1],
+		transfer_from: checkUserId[0].user_id,
+		transfer_to: checkUserId[1].user_id,
 		transfer_amount: transfer_amount,
 		transfer_time: dateFormat(new Date()),
 		created_at: new Date()
@@ -38,21 +38,21 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 	}
 
 	const findSaldo: SaldoDTO[] = await knex<SaldoDTO>('saldo')
-		.where({ user_id: checkUserId[0] })
+		.where({ user_id: checkUserId[0].user_id })
 		.select(['total_balance'])
 
 	if (findSaldo[0].total_balance <= 49000) {
 		return res.status(403).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'sisa saldo anda tidak cukup' + rupiahFormatter(findSaldo[0].total_balance.toString())
+			message: 'your balance is not enough' + rupiahFormatter(findSaldo[0].total_balance.toString())
 		})
 	}
 
 	const trimSaldo: number = findSaldo[0].total_balance - transfer_amount
 	const updateLastSaldo: number = await knex<SaldoDTO>('saldo')
-		.where({ user_id: checkUserId[0] })
-		.update({ total_balance: trimSaldo })
+		.where({ user_id: checkUserId[0].user_id })
+		.update({ total_balance: +trimSaldo, updated_at: new Date() })
 
 	if (updateLastSaldo < 1) {
 		return res.status(408).json({
