@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"outDir": "dist",
-		"target": "ES2016",
+		"target": "ESNext",
 		"module": "CommonJS",
 		"moduleResolution": "node",
 		"esModuleInterop": true,
@@ -16,6 +16,6 @@
 		"noImplicitAny": false,
 		"typeRoots": ["node_modules/@types/"]
 	},
-	"include": ["server.ts", "src/**/*.ts", "src/database/**/*.js", "knexfile.ts"],
+	"include": ["server.ts", "src/**/*.ts", "knexfile.ts"],
 	"exclude": ["node_modules", "dist"]
 }

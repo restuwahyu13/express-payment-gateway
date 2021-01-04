@@ -25,3 +25,10 @@ export interface IResetMail {
 	readonly subject: string
 	readonly html: string
 }
+
+export interface ITransferMail {
+	readonly from: string
+	readonly to: string
+	readonly subject: string
+	readonly html: string
+}

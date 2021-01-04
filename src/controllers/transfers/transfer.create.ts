@@ -8,6 +8,7 @@ import { SaldoDTO } from '../../dto/dto.saldo'
 import { dateFormat } from '../../utils/util.date'
 import { rupiahFormatter } from '../../utils/util.rupiah'
 import { tempMailTransfer } from '../../templates/template.transfer'
+import { ITransferMail } from '../../interface/i.tempmail'
 
 export const createTransfer = async (req: Request, res: Response): Promise<Response<any>> => {
 	const { transfer_from, transfer_to, transfer_amount }: TransferDTO = req.body
@@ -65,7 +66,7 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 		})
 	}
 
-	const template: ITopupMail = tempMailTransfer(checkUserId[0].email, checkUserId[1].email, transfer_amount)
+	const template: ITransferMail = tempMailTransfer(checkUserId[0].email, checkUserId[1].email, transfer_amount)
 	const sgResponse: [ClientResponse, any] = await sgMail.send(template)
 
 	if (!sgResponse) {

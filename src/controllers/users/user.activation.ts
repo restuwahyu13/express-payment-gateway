@@ -8,7 +8,7 @@ export const activation = async (req: Request, res: Response): Promise<Response<
 		const { email }: UsersDTO = verifySignAccessToken()(req, res, req.params.token)
 		const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: email }).select('active')
 
-		if (findUser[0].active == true) {
+		if (findUser[0].active === true) {
 			return res.status(200).json({
 				status: res.statusCode,
 				method: req.method,

@@ -17,7 +17,7 @@ export const login = async (req: Request, res: Response): Promise<Response<any>>
 		})
 	}
 
-	if (findUser[0].active == false) {
+	if (findUser[0].active === false) {
 		return res.status(400).json({
 			status: res.statusCode,
 			method: req.method,

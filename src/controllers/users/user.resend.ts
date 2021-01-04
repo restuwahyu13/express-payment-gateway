@@ -6,6 +6,7 @@ import { UsersDTO } from '../../dto/dto.users'
 import { tempMailResend } from '../../templates/template.resend'
 import { signAccessToken } from '../../utils/util.jwt'
 import { IResendMail } from '../../interface/i.tempmail'
+import { IJwt } from '../../interface/i.jwt'
 sgMail.setApiKey(process.env.SG_SECRET)
 
 export const resend = async (req: Request, res: Response): Promise<Response<any>> => {
@@ -19,7 +20,7 @@ export const resend = async (req: Request, res: Response): Promise<Response<any>
 		})
 	}
 
-	if (findUser[0].active == true) {
+	if (findUser[0].active === true) {
 		return res.status(200).json({
 			status: res.statusCode,
 			method: req.method,
@@ -28,8 +29,8 @@ export const resend = async (req: Request, res: Response): Promise<Response<any>
 	}
 
 	const { user_id, email }: UsersDTO = findUser[0]
-	const token: string = signAccessToken()(req, res, { user_id: user_id, email: email }, { expiresIn: '5m' })
-	const template: IResendMail = tempMailResend(email, token['accessToken'])
+	const { accessToken }: IJwt = signAccessToken()(req, res, { user_id: user_id, email: email }, { expiresIn: '5m' })
+	const template: IResendMail = tempMailResend(email, accessToken)
 
 	const sgResponse: [ClientResponse, any] = await sgMail.send(template)
 	if (!sgResponse) {

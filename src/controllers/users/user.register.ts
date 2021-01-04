@@ -8,6 +8,7 @@ import { signAccessToken } from '../../utils/util.jwt'
 import { tempMailRegister } from '../../templates/template.register'
 import { randomVCC } from '../../utils/util.randomVcc'
 import { IRegisterMail } from '../../interface/i.tempmail'
+import { IJwt } from '../../interface/i.jwt'
 sgMail.setApiKey(process.env.SG_SECRET)
 
 export const register = async (req: Request, res: Response): Promise<Response<any>> => {
@@ -38,8 +39,8 @@ export const register = async (req: Request, res: Response): Promise<Response<an
 	}
 
 	const { user_id, email }: UsersDTO = saveUser[0]
-	const token: string = signAccessToken()(req, res, { user_id: user_id, email: email }, { expiresIn: '5m' })
-	const template: IRegisterMail = tempMailRegister(email, token.accessToken)
+	const { accessToken }: IJwt = signAccessToken()(req, res, { user_id: user_id, email: email }, { expiresIn: '5m' })
+	const template: IRegisterMail = tempMailRegister(email, accessToken)
 
 	const sgResponse: [ClientResponse, any] = await sgMail.send(template)
 	if (!sgResponse) {

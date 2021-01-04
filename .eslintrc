@@ -7,10 +7,10 @@
 	"extends": [
 		"standard",
 		"eslint:recommended",
-		"plugin:jest/recommended",
-		"plugin:@typescript-eslint/recommended",
 		"prettier/@typescript-eslint",
-		"plugin:prettier/recommended"
+		"plugin:prettier/recommended",
+		"plugin:jest/recommended",
+		"plugin:@typescript-eslint/recommended"
 	],
 	"env": {
 		"node": true,
