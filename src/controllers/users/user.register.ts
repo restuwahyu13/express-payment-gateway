@@ -39,7 +39,7 @@ export const register = async (req: Request, res: Response): Promise<Response<an
 
 	const { user_id, email }: UsersDTO = saveUser[0]
 	const token: string = signAccessToken()(req, res, { user_id: user_id, email: email }, { expiresIn: '5m' })
-	const template: IRegisterMail = tempMailRegister(email, token['accessToken'])
+	const template: IRegisterMail = tempMailRegister(email, token.accessToken)
 
 	const sgResponse: [ClientResponse, any] = await sgMail.send(template)
 	if (!sgResponse) {

@@ -1,18 +1,18 @@
 import { dateFormat } from '../utils/util.date'
 import { rupiahFormatter } from '../utils/util.rupiah'
 
-interface ITopupMail {
+interface ITransferMail {
 	from: string
 	to: string
 	subject: string
 	html: string
 }
 
-export const tempMailTopup = (to: string, method: string, amount: number): ITopupMail => {
+export const tempMailTransfer = (from: string, to: string, amount: number): ITransferMail => {
 	return {
 		from: 'admin@bfintech.com',
 		to: to,
-		subject: 'Top up Saldo Successfuly',
+		subject: 'Transfer Saldo Successfuly',
 		html: `
         <!DOCTYPE html>
         <html lang="en">
@@ -43,7 +43,7 @@ nter;
                     top: 30px;
                 }
                 .container .logo {
-                    background: blue;
+                    background: purple;
                     width: 360px;
                     height: 40px;
                     border-radius: 10px;
@@ -94,7 +94,7 @@ nter;
                     width: 150px;
                     height: 50px;
                     border-radius: 10px;
-                    background: blue;
+                    background: purple;
                     position: relative;
                     top: 10px;
                     font-weight: bold;
@@ -109,7 +109,7 @@ nter;
                     top: 55px;
                 }
                 .footer-logo{
-                    background: blue;
+                    background: purple;
                     color: #f5f5f5;
                     width: 360px;
                     height: 40px;
@@ -135,23 +135,25 @@ nter;
                     <h4><a href="">Barbar Fintech Company</a></h4>
                 </div>
                 <div class="card-body">
-                    <p class="card-title"><strong>Hello Dear ${to}</strong></p>
-                        <p class="card-subtitle"><strong>Kepada user YTH </strong>Berikut adalah bukti topup anda:
+                    <p class="card-title"><strong>Hello Dear ${from}</strong></p>
+                        <p class="card-subtitle"><strong>Kepada user YTH </strong>Berikut adalah bukti transfer anda:
                     </p>
 									<div class="text-content">
-									  <h4>Topup Saldo Berhasil</h4>
+									  <h4>Transfer Uang Berhasil</h4>
 										<p>
-										  Selamat <b>${to}</b> anda telah berhasil melakukan topup saldo sebesar <b>${rupiahFormatter(amount.toString())}</b>
+										  Selamat <b>${from}</b> anda telah berhasil melakukan transfer saldo sebesar <b>${rupiahFormatter(
+			amount.toString()
+		)}</b>, ke saudara ${to}
 										</p>
 										 <ul>
+										 <li>
+											 <b>Pengirim</b>: ${from}
+										 </li>
 											<li>
 												<b>Penerima</b>: ${to}
 											</li>
 											<li>
 												<b>Jumlah</b>: ${rupiahFormatter(amount.toString())}
-											</li>
-											<li>
-											  <b>Payment</b>: ${method}
 											</li>
 											 <li>
 											  <b>Tanggal</b>: ${dateFormat(new Date()).format('lll')}

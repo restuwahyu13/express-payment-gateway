@@ -1,17 +1,20 @@
 import { Request, Response } from 'express'
+import sgMail from '@sendgrid/mail'
+import { ClientResponse } from '@sendgrid/client/src/response'
 import knex from '../../database'
 import { TransferDTO } from '../../dto/dto.transfer'
 import { UsersDTO } from '../../dto/dto.users'
 import { SaldoDTO } from '../../dto/dto.saldo'
 import { dateFormat } from '../../utils/util.date'
 import { rupiahFormatter } from '../../utils/util.rupiah'
+import { tempMailTransfer } from '../../templates/template.transfer'
 
 export const createTransfer = async (req: Request, res: Response): Promise<Response<any>> => {
 	const { transfer_from, transfer_to, transfer_amount }: TransferDTO = req.body
 
 	const checkUserId: UsersDTO[] = await knex<UsersDTO>('users')
 		.whereIn('noc_transfer', [transfer_from, transfer_to])
-		.select(['user_id'])
+		.select(['user_id', 'email'])
 
 	if (checkUserId.length < 1) {
 		return res.status(404).json({
@@ -62,16 +65,16 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 		})
 	}
 
-	// const template: ITopupMail = tempMailTopup(findUser[0].email, topup_method, topup_amount)
-	// const sgResponse: [ClientResponse, any] = await sgMail.send(template)
+	const template: ITopupMail = tempMailTransfer(checkUserId[0].email, checkUserId[1].email, transfer_amount)
+	const sgResponse: [ClientResponse, any] = await sgMail.send(template)
 
-	// if (!sgResponse) {
-	// 	return res.status(500).json({
-	// 		status: res.statusCode,
-	// 		method: req.method,
-	// 		message: 'Internal server error, failed to sending email confirmation transfer'
-	// 	})
-	// }
+	if (!sgResponse) {
+		return res.status(500).json({
+			status: res.statusCode,
+			method: req.method,
+			message: 'Internal server error, failed to sending email confirmation transfer'
+		})
+	}
 
 	return res.status(200).json({
 		status: res.statusCode,
