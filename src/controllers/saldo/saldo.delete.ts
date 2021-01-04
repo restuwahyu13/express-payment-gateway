@@ -9,17 +9,17 @@ export const deleteSaldo = async (req: Request, res: Response): Promise<Response
 		return res.status(404).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'saldo id is not exist, cannot delete data saldo'
+			message: 'saldo id is not exist, failed to deleted data saldo'
 		})
 	}
 
-	const deleteSaldo: number = await knex<TopupsDTO>('knex').where({ saldo_id: findSaldo[0].saldo_id }).delete()
+	const deleteSaldo: number = await knex<SaldoDTO>('saldo').where({ saldo_id: findSaldo[0].saldo_id }).delete()
 
 	if (deleteSaldo < 1) {
-		return res.status(400).json({
+		return res.status(408).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'delete data saldo failed, please try again'
+			message: 'delete data saldo failed, server is busy'
 		})
 	}
 

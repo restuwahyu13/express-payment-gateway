@@ -6,7 +6,14 @@ import { SaldoDTO } from '../../dto/dto.saldo'
 import { UsersDTO } from '../../dto/dto.users'
 import { rupiahFormatter } from '../../utils/util.rupiah'
 import { dateFormat } from '../../utils/util.date'
-import { IFindBalanceHistory, IFindBalance, INewBalanceUsers, INewFindBalanceHistory } from '../../interface/i.saldo'
+import {
+	IFindBalance,
+	INewFindBalance,
+	IParamsFindBalance,
+	IFindBalanceHistory,
+	INewFindBalanceHistory,
+	IParamsFindBalanceHistory
+} from '../../interface/i.saldo'
 
 export const resultSaldo = async (req: Request, res: Response): Promise<Response<any>> => {
 	const findBalanceHistory: IFindBalanceHistory[] = await knex<SaldoHistoryDTO, TopupsDTO>('saldo_history')
@@ -38,7 +45,7 @@ export const resultSaldo = async (req: Request, res: Response): Promise<Response
 		.where({ 'users.user_id': findBalanceHistory[0].user_id })
 
 	const newFindBalanceHistory = findBalanceHistory.map(
-		(val): INewFindBalanceHistory => ({
+		(val: IParamsFindBalanceHistory): INewFindBalanceHistory => ({
 			user_id: val.user_id,
 			saldoTopup: rupiahFormatter(val.balance.toString()),
 			metodePembayaran: val.topup_method,
@@ -47,7 +54,7 @@ export const resultSaldo = async (req: Request, res: Response): Promise<Response
 	)
 
 	const newBalanceUsers = findBalance.map(
-		(val): INewBalanceUsers => {
+		(val: IParamsFindBalance): INewFindBalance => {
 			return {
 				reportSaldoUser: {
 					user_id: val.saldo_user_id,

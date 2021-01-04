@@ -6,7 +6,14 @@ import { TopupsDTO } from '../../dto/dto.topups'
 import { UsersDTO } from '../../dto/dto.users'
 import { rupiahFormatter } from '../../utils/util.rupiah'
 import { dateFormat } from '../../utils/util.date'
-import { IFindBalance, IFindBalanceHistory, INewBalanceUsers, INewFindBalanceHistory } from '../../interface/i.saldo'
+import {
+	IFindBalance,
+	IFindBalanceHistory,
+	INewFindBalance,
+	INewFindBalanceHistory,
+	IParamsFindBalance,
+	IParamsFindBalanceHistory
+} from '../../interface/i.saldo'
 
 export const resultsSaldo = async (req: Request, res: Response): Promise<Response<any>> => {
 	const findBalance: IFindBalance[] = await knex<SaldoDTO, UsersDTO>('saldo')
@@ -23,7 +30,7 @@ export const resultsSaldo = async (req: Request, res: Response): Promise<Respons
 		.orderBy('saldo_user_id', 'asc')
 
 	const mergeFindBalanceHistory = findBalance.map(
-		async (val: INewFindBalanceHistory): Promise<INewFindBalanceHistory<[]>> => {
+		async (val: IParamsFindBalance): Promise<Array<INewFindBalanceHistory>> => {
 			const findBalanceHistory: IFindBalanceHistory[] = await knex<SaldoHistoryDTO, TopupsDTO>('saldo_history')
 				.join('topups', 'topups.topup_id', 'saldo_history.topup_id')
 				.select(['topups.user_id', 'topups.topup_method', 'saldo_history.balance', 'saldo_history.created_at'])
@@ -32,15 +39,16 @@ export const resultsSaldo = async (req: Request, res: Response): Promise<Respons
 				.orderBy('created_at', 'desc')
 
 			const newBalanceHistory = findBalanceHistory.map(
-				(val: IFindBalanceHistory): INewFindBalanceHistory => ({
-					user_ud: val.user_id,
+				(val: IParamsFindBalanceHistory): INewFindBalanceHistory => ({
+					user_id: val.user_id,
 					saldoTopup: rupiahFormatter(val.balance.toString()),
 					metodePembayaran: val.topup_method,
 					tanggalTopup: dateFormat(val.created_at).format('llll')
 				})
 			)
 
-			return [].concat(newBalanceHistory)
+			const mergeData: Array<INewFindBalanceHistory> = []
+			return mergeData.concat(newBalanceHistory)
 		}
 	)
 
@@ -50,7 +58,7 @@ export const resultsSaldo = async (req: Request, res: Response): Promise<Respons
 	}
 
 	const newBalanceUsers = findBalance.map(
-		(val: INewBalanceUsers, i: number): INewBalanceUsers => {
+		(val: IParamsFindBalance, i: number): INewFindBalance => {
 			return {
 				reportSaldoUser: {
 					user_id: val.saldo_user_id,

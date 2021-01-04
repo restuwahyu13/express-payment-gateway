@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 import knex from '../../database'
 import { SaldoDTO } from '../../dto/dto.saldo'
-import { TopupsDTO } from '../../dto/dto.topups'
+import { UsersDTO } from '../../dto/dto.users'
 
 export const createSaldo = async (req: Request, res: Response): Promise<Response<any>> => {
-	const { topup_id, balance }: SaldoDTO = req.body
-	const checkTopupId: TopupsDTO[] = await knex<TopupsDTO>('topups').where({ topup_id: topup_id }).select('*')
+	const { user_id, total_balance }: SaldoDTO = req.body
+	const checkTopupId: UsersDTO[] = await knex<UsersDTO>('users').where({ user_id: user_id }).select('*')
 
 	if (checkTopupId.length < 1) {
 		return res.status(404).json({
@@ -17,8 +17,8 @@ export const createSaldo = async (req: Request, res: Response): Promise<Response
 
 	const saveSaldo = await knex<SaldoDTO>('saldo')
 		.insert({
-			topup_id: topup_id,
-			balance: balance,
+			topup_id: user_id,
+			balance: total_balance,
 			created_at: new Date()
 		})
 		.returning('*')
