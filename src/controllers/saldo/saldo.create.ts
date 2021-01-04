@@ -34,6 +34,6 @@ export const createSaldo = async (req: Request, res: Response): Promise<Response
 	return res.status(200).json({
 		status: res.statusCode,
 		method: req.method,
-		message: 'top up balance successfuly'
+		message: 'top up balance successfully'
 	})
 }

@@ -1,18 +1,16 @@
 import * as Knex from 'knex'
 
 export async function up(knex: Knex): Promise<Knex.SchemaBuilder> {
-	await knex.schema.createTable('saldo', (table: Knex.TableBuilder) => {
-		table.increments('saldo_id').primary()
+	await knex.schema.createTable('saldo_history', (table: Knex.TableBuilder) => {
+		table.increments('saldo_history_id').primary()
 		table
-			.integer('user_id')
-			.references('user_id')
-			.inTable('users')
+			.integer('topup_id')
+			.references('topup_id')
+			.inTable('topups')
 			.onDelete('CASCADE')
 			.onUpdate('CASCADE')
 			.notNullable()
-		table.bigInteger('total_balance').notNullable()
-		table.bigInteger('withdraw_amount').defaultTo(0)
-		table.dateTime('withdraw_time').defaultTo(null)
+		table.bigInteger('balance').notNullable()
 		table.timestamp('created_at').defaultTo(null)
 		table.timestamp('updated_at').defaultTo(null)
 	})

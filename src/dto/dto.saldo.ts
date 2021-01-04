@@ -1,7 +1,7 @@
 interface ISaldo {
 	readonly saldo_id?: number
-	readonly topup_id?: number
-	readonly balance?: number
+	readonly user_id?: number
+	readonly total_balance?: number
 	readonly withdraw?: number
 	readonly withdraw_time?: any
 	readonly created_at?: Date
@@ -10,8 +10,8 @@ interface ISaldo {
 
 export class SaldoDTO implements ISaldo {
 	readonly saldo_id?: number
-	readonly topup_id?: number
-	readonly balance?: number
+	readonly user_id?: number
+	readonly total_balance?: number
 	readonly withdraw?: number
 	readonly withdraw_time?: any
 	readonly created_at?: Date

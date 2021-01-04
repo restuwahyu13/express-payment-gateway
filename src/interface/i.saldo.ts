@@ -1,14 +1,20 @@
+export interface IFindBalanceHistory {
+	user_id: number
+	total_balance: number
+}
+
 export interface IFindBalance {
 	user_id: number
-	saldo_balance: number
-	saldo_withdraw: number
+	total_balance: number
+}
+
+type Data = {
+	email: string
+	noc_transfer: number
 }
 
 export interface IMergeUsers {
-	data: {
-		email: string
-		noc_transfer: number
-	}
+	data: Data
 	saldo_balance: number
 	saldo_withdraw: number
 	user_id: number

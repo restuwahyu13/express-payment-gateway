@@ -17,6 +17,14 @@ export const resultsSaldo = async (req: Request, res: Response): Promise<Respons
 		.groupBy(['topups.user_id'])
 		.orderBy('topups.user_id', 'asc')
 
+	if (findBalance.length < 1) {
+		return res.status(404).json({
+			status: res.statusCode,
+			method: req.method,
+			message: 'data is not exist'
+		})
+	}
+
 	const findAllUserId = findBalance.map((val): number => val.user_id)
 	const findUsers: UsersDTO[] = await knex<UsersDTO>('users')
 		.select(['email', 'noc_transfer'])

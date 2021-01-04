@@ -50,8 +50,8 @@ export const login = async (req: Request, res: Response): Promise<Response<any>>
 
 			await knex<LogsDTO>('logs').insert({
 				user_id: user_id,
-				logs_status: 'STATUS_LOGIN',
-				logs_time: dateFormat(new Date()),
+				log_status: 'STATUS_LOGIN',
+				log_time: dateFormat(new Date()),
 				created_at: new Date()
 			})
 
@@ -63,7 +63,7 @@ export const login = async (req: Request, res: Response): Promise<Response<any>>
 				return res.status(200).json({
 					status: res.statusCode,
 					method: req.method,
-					message: 'Login successfuly',
+					message: 'Login successfully',
 					...token
 				})
 			}

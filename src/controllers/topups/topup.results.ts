@@ -27,7 +27,7 @@ export const resultsTopup = async (req: Request, res: Response): Promise<Respons
 		return res.status(404).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'data is not exists'
+			message: 'data is not exist'
 		})
 	}
 

@@ -28,7 +28,7 @@ export const resultTopup = async (req: Request, res: Response): Promise<Response
 		return res.status(404).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'topup id is not exist'
+			message: 'topup id is not exist, in the system'
 		})
 	}
 
@@ -57,7 +57,7 @@ export const resultTopup = async (req: Request, res: Response): Promise<Response
 	return res.status(200).json({
 		status: res.statusCode,
 		method: req.method,
-		message: 'Date already to use',
+		message: 'data already to use',
 		data: newTopupData
 	})
 }

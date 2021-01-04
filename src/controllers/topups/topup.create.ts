@@ -4,12 +4,14 @@ import { ClientResponse } from '@sendgrid/client/src/response'
 import knex from '../../database'
 import { TopupsDTO } from '../../dto/dto.topups'
 import { SaldoDTO } from '../../dto/dto.saldo'
+import { SaldoHistoryDTO } from '../../dto/dto.saldoHistory'
 import { LogsDTO } from '../../dto/dto.logs'
 import { uniqueOrderNumber } from '../../utils/util.uuid'
 import { UsersDTO } from '../../dto/dto.users'
 import { tempMailTopup } from '../../templates/template.topup'
 import { dateFormat } from '../../utils/util.date'
 import { ITopupMail } from '../../interface/i.tempmail'
+import { IFindBalanceHistory } from '../../interface/i.saldo'
 
 export const createTopup = async (req: Request, res: Response): Promise<Response<any>> => {
 	if (req.body.topup_amount <= 49000) {
@@ -26,7 +28,7 @@ export const createTopup = async (req: Request, res: Response): Promise<Response
 		return res.status(400).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'top up balance failed, user id is not exist in the system'
+			message: 'user id is not exist, top up balance failed'
 		})
 	}
 
@@ -49,28 +51,39 @@ export const createTopup = async (req: Request, res: Response): Promise<Response
 		})
 	}
 
-	// const checkUserIdIdExist: SaldoDTO[] = await knex<SaldoDTO>('saldo')
-	// 	.where({ user_id: findUser[0].user_id })
-	// 	.select('topup_id')
-
-	// if (checkUserIdIdExist.length < 1) {
 	const { topup_id, user_id, topup_amount, topup_method }: TopupsDTO = saveTopup[0]
-	await knex<SaldoDTO>('saldo').insert({ topup_id: topup_id, balance: topup_amount, created_at: new Date() })
-	// } else {
-	// 	const { topup_id }: SaldoDTO = checkUserIdIdExist[0]
-	// 	const findBalance: SaldoDTO[] = await knex<SaldoDTO>('saldo')
-	// 		.where({ topup_id: topup_id })
-	// 		.select(['saldo_id', 'balance'])
+	await knex<SaldoHistoryDTO>('saldo_history').insert({
+		topup_id: topup_id,
+		balance: topup_amount,
+		created_at: new Date()
+	})
 
-	// 	const { saldo_id, balance }: SaldoDTO = findBalance[0]
-	// 	const addBalance = balance + saveTopup[0].topup_amount
-	// 	await knex('saldo').where({ saldo_id: saldo_id }).update({ balance: addBalance, updated_at: new Date() })
-	// }
+	const checkSaldoUserId: SaldoDTO[] = await knex<SaldoDTO>('saldo').where({ user_id: user_id }).select(['user_id'])
+
+	if (checkSaldoUserId.length < 1) {
+		await knex<SaldoDTO>('saldo').insert({
+			user_id: user_id,
+			total_balance: topup_amount,
+			created_at: new Date()
+		})
+	} else {
+		console.log('tes 2')
+		const findBalanceHistory: IFindBalanceHistory[] = await knex<SaldoHistoryDTO, TopupsDTO>('saldo_history')
+			.join('topups', 'topups.topup_id', 'saldo_history.topup_id')
+			.select(['topups.user_id', knex.raw('SUM(saldo_history.balance) as total_balance')])
+			.where({ user_id: checkSaldoUserId[0].user_id })
+			.groupBy(['topups.user_id'])
+
+		const { user_id, total_balance }: IFindBalanceHistory = findBalanceHistory[0]
+		await knex<SaldoDTO>('saldo')
+			.where({ user_id: user_id })
+			.update({ total_balance: total_balance, updated_at: new Date() })
+	}
 
 	await knex<LogsDTO>('logs').insert({
 		user_id: user_id,
-		logs_status: 'TOPUP_BALANCE',
-		logs_time: dateFormat(new Date()),
+		log_status: 'TOPUP_BALANCE',
+		log_time: dateFormat(new Date()),
 		created_at: new Date()
 	})
 
@@ -81,13 +94,13 @@ export const createTopup = async (req: Request, res: Response): Promise<Response
 		return res.status(500).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'Server error failed to sending email confirmation topup'
+			message: 'Server error, failed to sending email confirmation topup'
 		})
 	}
 
 	return res.status(201).json({
 		status: res.statusCode,
 		method: req.method,
-		message: 'top up balance successfuly'
+		message: 'top up balance successfully'
 	})
 }
