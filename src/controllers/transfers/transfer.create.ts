@@ -2,14 +2,15 @@ import { Request, Response } from 'express'
 import knex from '../../database'
 import { TransferDTO } from '../../dto/dto.transfer'
 import { UsersDTO } from '../../dto/dto.users'
+import { SaldoDTO } from '../../dto/dto.saldo'
 import { dateFormat } from '../../utils/util.date'
-import { IFindBalance } from '../../interface/i.saldo'
+import { rupiahFormatter } from '../../utils/util.rupiah'
 
 export const createTransfer = async (req: Request, res: Response): Promise<Response<any>> => {
-	const { from_user, to_user, transfer_amount }: TransferDTO = req.body
+	const { transfer_from, transfer_to, transfer_amount }: TransferDTO = req.body
 
-	const checkUserId = await knex<UsersDTO>('users')
-		.whereIn('noc_transfer', [from_user, to_user])
+	const checkUserId: UsersDTO[] = await knex<UsersDTO>('users')
+		.whereIn('noc_transfer', [transfer_from, transfer_to])
 		.select(['user_id', 'email', 'noc_transfer'])
 
 	if (checkUserId.length < 1) {
@@ -28,23 +29,53 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 		created_at: new Date()
 	})
 
-	const findBalance: IFindBalance[] = await knex<SaldoDTO, TopupsDTO>('saldo')
-		.join('topups', 'topups.topup_id', 'saldo.topup_id')
-		.select([
-			'topups.user_id',
-			knex.raw('SUM(saldo.balance) as saldo_balance'),
-			knex.raw('SUM(saldo.withdraw) as saldo_withdraw')
-		])
-		.where({ user_id: req.params.id })
-		.groupBy(['topups.user_id'])
-		.orderBy('topups.user_id', 'asc')
+	if (Object.keys(saveTransfer).length < 1) {
+		return res.status(408).json({
+			status: res.statusCode,
+			method: req.method,
+			message: 'transfer balance failed, server is busy'
+		})
+	}
 
-	const { saldo_balance }: IFindBalance = findBalance[0]
-	const withdrawAmount = saldo_balance - transfer_amount
+	const findSaldo: SaldoDTO[] = await knex<SaldoDTO>('saldo')
+		.where({ user_id: checkUserId[0] })
+		.select(['total_balance'])
+
+	if (findSaldo[0].total_balance <= 49000) {
+		return res.status(403).json({
+			status: res.statusCode,
+			method: req.method,
+			message: 'sisa saldo anda tidak cukup' + rupiahFormatter(findSaldo[0].total_balance.toString())
+		})
+	}
+
+	const trimSaldo: number = findSaldo[0].total_balance - transfer_amount
+	const updateLastSaldo: number = await knex<SaldoDTO>('saldo')
+		.where({ user_id: checkUserId[0] })
+		.update({ total_balance: trimSaldo })
+
+	if (updateLastSaldo < 1) {
+		return res.status(408).json({
+			status: res.statusCode,
+			method: req.method,
+			message: 'transfer balance failed, server is busy'
+		})
+	}
+
+	// const template: ITopupMail = tempMailTopup(findUser[0].email, topup_method, topup_amount)
+	// const sgResponse: [ClientResponse, any] = await sgMail.send(template)
+
+	// if (!sgResponse) {
+	// 	return res.status(500).json({
+	// 		status: res.statusCode,
+	// 		method: req.method,
+	// 		message: 'Internal server error, failed to sending email confirmation transfer'
+	// 	})
+	// }
 
 	return res.status(200).json({
 		status: res.statusCode,
 		method: req.method,
-		message: 'Hello Wordl'
+		message: 'transfer balance successfully'
 	})
 }
