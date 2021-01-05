@@ -4,10 +4,10 @@ import { TopupsDTO } from '../../dto/dto.topups'
 import { UsersDTO } from '../../dto/dto.users'
 import { dateFormat } from '../../utils/util.date'
 import { rupiahFormatter } from '../../utils/util.rupiah'
-import { IAllUserTopup, IUserTopup } from '../../interface/i.topup'
+import { IUserTopupAll, IUserTopup } from '../../interface/i.topup'
 
 export const resultTopup = async (req: Request, res: Response): Promise<Response<any>> => {
-	const findTopup: IAllUserTopup[] = await knex<UsersDTO, TopupsDTO>('topups')
+	const findTopup: IUserTopupAll[] = await knex<UsersDTO, TopupsDTO>('topups')
 		.join('users', 'topups.user_id', 'users.user_id')
 		.select([
 			'users.user_id',
@@ -35,20 +35,19 @@ export const resultTopup = async (req: Request, res: Response): Promise<Response
 	const newTopupData = findTopup.map(
 		(val): IUserTopup => {
 			return {
-				userTopup: {
+				topup_history: {
 					topup_id: val.topup_id,
-					nomor_topup: val.topup_no,
+					kode_topup: val.topup_no,
 					jumlah_topup: rupiahFormatter(val.topup_amount.toString()),
-					metodePembayaran_topup: val.topup_method,
-					waktu_topup: dateFormat(val.topup_time).format('llll'),
-					userData: {
+					metode_pembayaran: val.topup_method,
+					user: {
 						user_id: val.user_id,
 						email: val.email,
-						photoProfile: val.photo,
 						kode_transfer: val.noc_transfer,
-						pertama_login: dateFormat(val.first_login).format('llll'),
-						terakhir_login: val.last_login
-					}
+						pertama_masuk: dateFormat(val.first_login).format('llll'),
+						terakhir_masuk: val.last_login
+					},
+					tanggal_topup: dateFormat(val.topup_time).format('llll')
 				}
 			}
 		}
@@ -58,6 +57,6 @@ export const resultTopup = async (req: Request, res: Response): Promise<Response
 		status: res.statusCode,
 		method: req.method,
 		message: 'data already to use',
-		data: newTopupData
+		data: newTopupData[0]
 	})
 }

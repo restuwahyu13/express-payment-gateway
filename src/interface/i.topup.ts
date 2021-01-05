@@ -1,4 +1,4 @@
-export interface IAllUserTopup {
+export interface IUserTopupAll {
 	readonly user_id: number
 	readonly email: string
 	readonly photo: string
@@ -12,22 +12,37 @@ export interface IAllUserTopup {
 	readonly topup_time: any
 }
 
-type UserData = {
+export interface IUserTopupParams {
 	readonly user_id: number
 	readonly email: string
-	readonly photoProfile: string
+	readonly photo: string
+	readonly noc_transfer: number
+	readonly first_login: any
+	readonly last_login: any
+	readonly topup_id: number
+	readonly topup_no: number
+	readonly topup_amount: string
+	readonly topup_method: string
+	readonly topup_time: any
+}
+
+type UserTopopSub = {
+	readonly user_id: number
+	readonly email: string
 	readonly kode_transfer: number
-	readonly pertama_login: string
-	readonly terakhir_login: any
+	readonly pertama_masuk: any
+	readonly terakhir_masuk: any
+}
+
+type UserTopop = {
+	readonly topup_id: number
+	readonly kode_topup: number
+	readonly jumlah_topup: string
+	readonly metode_pembayaran: string
+	readonly user: UserTopopSub
+	readonly tanggal_topup: any
 }
 
 export interface IUserTopup {
-	readonly userTopup: {
-		readonly topup_id: number
-		readonly nomor_topup: number
-		readonly jumlah_topup: string
-		readonly metodePembayaran_topup: string
-		readonly waktu_topup: string
-		readonly userData: UserData
-	}
+	readonly topup_history: UserTopop
 }
