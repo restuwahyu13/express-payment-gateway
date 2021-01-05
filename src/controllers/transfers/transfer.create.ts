@@ -13,11 +13,15 @@ import { ITransferMail } from '../../interface/i.tempmail'
 export const createTransfer = async (req: Request, res: Response): Promise<Response<any>> => {
 	const { transfer_from, transfer_to, transfer_amount }: TransferDTO = req.body
 
-	const checkUserId: UsersDTO[] = await knex<UsersDTO>('users')
-		.whereIn('noc_transfer', [transfer_from, transfer_to])
+	const checkUserIdFrom: UsersDTO[] = await knex<UsersDTO>('users')
+		.where({ noc_transfer: transfer_from })
 		.select(['user_id', 'email'])
 
-	if (checkUserId.length < 1) {
+	const checkUserIdTo: UsersDTO[] = await knex<UsersDTO>('users')
+		.where({ noc_transfer: transfer_to })
+		.select(['user_id', 'email'])
+
+	if (!checkUserIdFrom[0] || !checkUserIdTo[0]) {
 		return res.status(404).json({
 			status: res.statusCode,
 			method: req.method,
@@ -26,8 +30,8 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 	}
 
 	const saveTransfer: TransferDTO[] = await knex<TransferDTO>('transfer').insert({
-		transfer_from: checkUserId[0].user_id,
-		transfer_to: checkUserId[1].user_id,
+		transfer_from: checkUserIdFrom[0].user_id,
+		transfer_to: checkUserIdTo[0].user_id,
 		transfer_amount: transfer_amount,
 		transfer_time: dateFormat(new Date()),
 		created_at: new Date()
@@ -41,24 +45,43 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 		})
 	}
 
-	const findSaldo: SaldoDTO[] = await knex<SaldoDTO>('saldo')
-		.where({ user_id: checkUserId[0].user_id })
-		.select(['total_balance'])
+	const checkSaldoFrom: SaldoDTO[] = await knex<SaldoDTO>('saldo')
+		.where({ user_id: checkUserIdFrom[0].user_id })
+		.select('total_balance')
 
-	if (findSaldo[0].total_balance <= 49000) {
+	if (checkSaldoFrom[0].total_balance <= 49000) {
 		return res.status(403).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'your balance is not enough' + rupiahFormatter(findSaldo[0].total_balance.toString())
+			message: 'your balance is not enough ' + rupiahFormatter(checkSaldoFrom[0].total_balance.toString())
 		})
 	}
 
-	const trimSaldo: number = findSaldo[0].total_balance - transfer_amount
-	const updateLastSaldo: number = await knex<SaldoDTO>('saldo')
-		.where({ user_id: checkUserId[0].user_id })
-		.update({ total_balance: +trimSaldo, updated_at: new Date() })
+	const findSaldoFrom: SaldoDTO[] = await knex<SaldoDTO>('saldo')
+		.where({ user_id: checkUserIdFrom[0].user_id })
+		.select([knex.raw(`SUM(total_balance - ${transfer_amount}) as total_balance`), 'email'])
 
-	if (updateLastSaldo < 1) {
+	const findSaldoTo: SaldoDTO[] = await knex<SaldoDTO>('saldo')
+		.where({ user_id: checkUserIdTo[0].user_id })
+		.select(['total_balance', 'email'])
+
+	if (!findSaldoFrom[0] || !findSaldoTo[0]) {
+		return res.status(408).json({
+			status: res.statusCode,
+			method: req.method,
+			message: 'saldo id is not exist, transfer balance failed'
+		})
+	}
+
+	const updateSaldoUserFrom: number = await knex<SaldoDTO>('saldo')
+		.where({ user_id: findSaldoFrom[0].user_id })
+		.update({ total_balance: findSaldoFrom[0].total_balance, updated_at: new Date() })
+
+	const updateSaldoUserTo: number = await knex<SaldoDTO>('saldo')
+		.where({ user_id: findSaldoTo[0].user_id })
+		.update({ total_balance: findSaldoTo[0].total_balance, updated_at: new Date() })
+
+	if (updateSaldoUserFrom < 1 || updateSaldoUserTo < 1) {
 		return res.status(408).json({
 			status: res.statusCode,
 			method: req.method,
@@ -66,20 +89,20 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 		})
 	}
 
-	const template: ITransferMail = tempMailTransfer(checkUserId[0].email, checkUserId[1].email, transfer_amount)
+	const template: ITransferMail = tempMailTransfer(checkUserIdFrom[0].email, checkUserIdTo[0].email, transfer_amount)
 	const sgResponse: [ClientResponse, any] = await sgMail.send(template)
 
 	if (!sgResponse) {
 		return res.status(500).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'Internal server error, failed to sending email confirmation transfer'
+			message: 'Internal server error, failed to sending email notification transfer'
 		})
 	}
 
 	return res.status(200).json({
 		status: res.statusCode,
 		method: req.method,
-		message: 'transfer balance successfully'
+		message: `transfer balance successfully, please check your email ${findSaldoFrom[0].email}`
 	})
 }

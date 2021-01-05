@@ -31,7 +31,6 @@
 		"express-rate-limit": "^5.2.3",
 		"express-slow-down": "^1.4.0",
 		"helmet": "^4.2.0",
-		"http-errors": "^1.8.0",
 		"js-base64": "^3.6.0",
 		"jsonwebtoken": "^8.5.1",
 		"knex": "^0.21.15",

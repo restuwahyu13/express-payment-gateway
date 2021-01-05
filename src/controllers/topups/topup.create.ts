@@ -93,13 +93,13 @@ export const createTopup = async (req: Request, res: Response): Promise<Response
 		return res.status(500).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'Server error, failed to sending email confirmation topup'
+			message: 'Internal server error, failed to sending email notification topup'
 		})
 	}
 
 	return res.status(201).json({
 		status: res.statusCode,
 		method: req.method,
-		message: 'top up balance successfully'
+		message: `top up balance successfully, please check your email ${findUser[0].email}`
 	})
 }
