@@ -12,7 +12,7 @@ export const tempMailTopup = (to: string, method: string, amount: number): ITopu
 	return {
 		from: 'admin@bfintech.com',
 		to: to,
-		subject: 'Top up Saldo Successfuly',
+		subject: 'Top up Saldo Successfully',
 		html: `
         <!DOCTYPE html>
         <html lang="en">

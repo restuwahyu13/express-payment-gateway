@@ -12,7 +12,7 @@ export const tempMailTransfer = (from: string, to: string, amount: number): ITra
 	return {
 		from: 'admin@bfintech.com',
 		to: to,
-		subject: 'Transfer Saldo Successfuly',
+		subject: 'Transfer Saldo Successfully',
 		html: `
         <!DOCTYPE html>
         <html lang="en">

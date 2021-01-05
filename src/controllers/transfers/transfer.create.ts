@@ -29,21 +29,21 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 		})
 	}
 
-	const saveTransfer: TransferDTO[] = await knex<TransferDTO>('transfer').insert({
-		transfer_from: checkUserIdFrom[0].user_id,
-		transfer_to: checkUserIdTo[0].user_id,
-		transfer_amount: transfer_amount,
-		transfer_time: dateFormat(new Date()),
-		created_at: new Date()
-	})
+	// const saveTransfer: TransferDTO[] = await knex<TransferDTO>('transfer').insert({
+	// 	transfer_from: checkUserIdFrom[0].user_id,
+	// 	transfer_to: checkUserIdTo[0].user_id,
+	// 	transfer_amount: transfer_amount,
+	// 	transfer_time: dateFormat(new Date()),
+	// 	created_at: new Date()
+	// })
 
-	if (Object.keys(saveTransfer).length < 1) {
-		return res.status(408).json({
-			status: res.statusCode,
-			method: req.method,
-			message: 'transfer balance failed, server is busy'
-		})
-	}
+	// if (Object.keys(saveTransfer).length < 1) {
+	// 	return res.status(408).json({
+	// 		status: res.statusCode,
+	// 		method: req.method,
+	// 		message: 'transfer balance failed, server is busy'
+	// 	})
+	// }
 
 	const checkSaldoFrom: SaldoDTO[] = await knex<SaldoDTO>('saldo')
 		.where({ user_id: checkUserIdFrom[0].user_id })
@@ -59,11 +59,11 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 
 	const findSaldoFrom: SaldoDTO[] = await knex<SaldoDTO>('saldo')
 		.where({ user_id: checkUserIdFrom[0].user_id })
-		.select([knex.raw(`SUM(total_balance - ${transfer_amount}) as total_balance`), 'email'])
+		.select(knex.raw(`SUM(total_balance - ${transfer_amount}) as total_balance`))
 
 	const findSaldoTo: SaldoDTO[] = await knex<SaldoDTO>('saldo')
 		.where({ user_id: checkUserIdTo[0].user_id })
-		.select(['total_balance', 'email'])
+		.select(knex.raw(`SUM(total_balance + ${transfer_amount}) as total_balance`))
 
 	if (!findSaldoFrom[0] || !findSaldoTo[0]) {
 		return res.status(408).json({
@@ -74,11 +74,11 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 	}
 
 	const updateSaldoUserFrom: number = await knex<SaldoDTO>('saldo')
-		.where({ user_id: findSaldoFrom[0].user_id })
+		.where({ user_id: checkUserIdFrom[0].user_id })
 		.update({ total_balance: findSaldoFrom[0].total_balance, updated_at: new Date() })
 
 	const updateSaldoUserTo: number = await knex<SaldoDTO>('saldo')
-		.where({ user_id: findSaldoTo[0].user_id })
+		.where({ user_id: checkUserIdTo[0].user_id })
 		.update({ total_balance: findSaldoTo[0].total_balance, updated_at: new Date() })
 
 	if (updateSaldoUserFrom < 1 || updateSaldoUserTo < 1) {
@@ -103,6 +103,8 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 	return res.status(200).json({
 		status: res.statusCode,
 		method: req.method,
-		message: `transfer balance successfully, please check your email ${findSaldoFrom[0].email}`
+		message: `transfer balance successfully, please check your email ${checkUserIdFrom[0].email}`,
+		fromBalance: findSaldoFrom[0].total_balance,
+		toBalance: findSaldoTo[0].total_balance
 	})
 }
