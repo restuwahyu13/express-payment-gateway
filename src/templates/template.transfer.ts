@@ -11,7 +11,7 @@ interface ITransferMail {
 export const tempMailTransfer = (from: string, to: string, amount: number): ITransferMail => {
 	return {
 		from: 'admin@bfintech.com',
-		to: to,
+		to: from,
 		subject: 'Transfer Saldo Successfully',
 		html: `
         <!DOCTYPE html>
@@ -143,7 +143,7 @@ nter;
 										<p>
 										  Selamat <b>${from}</b> anda telah berhasil melakukan transfer saldo sebesar <b>${rupiahFormatter(
 			amount.toString()
-		)}</b>, ke saudara ${to}
+		)}</b>, ke saudara <b>${to}</b>
 										</p>
 										 <ul>
 										 <li>
@@ -153,7 +153,7 @@ nter;
 												<b>Penerima</b>: ${to}
 											</li>
 											<li>
-												<b>Jumlah</b>: ${rupiahFormatter(amount.toString())}
+												<b>Jumlah Transfer</b>: ${rupiahFormatter(amount.toString())}
 											</li>
 											 <li>
 											  <b>Tanggal</b>: ${dateFormat(new Date()).format('lll')}

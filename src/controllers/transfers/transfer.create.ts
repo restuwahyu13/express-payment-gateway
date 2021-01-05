@@ -29,21 +29,21 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 		})
 	}
 
-	// const saveTransfer: TransferDTO[] = await knex<TransferDTO>('transfer').insert({
-	// 	transfer_from: checkUserIdFrom[0].user_id,
-	// 	transfer_to: checkUserIdTo[0].user_id,
-	// 	transfer_amount: transfer_amount,
-	// 	transfer_time: dateFormat(new Date()),
-	// 	created_at: new Date()
-	// })
+	const saveTransfer: TransferDTO[] = await knex<TransferDTO>('transfer').insert({
+		transfer_from: checkUserIdFrom[0].user_id,
+		transfer_to: checkUserIdTo[0].user_id,
+		transfer_amount: transfer_amount,
+		transfer_time: dateFormat(new Date()),
+		created_at: new Date()
+	})
 
-	// if (Object.keys(saveTransfer).length < 1) {
-	// 	return res.status(408).json({
-	// 		status: res.statusCode,
-	// 		method: req.method,
-	// 		message: 'transfer balance failed, server is busy'
-	// 	})
-	// }
+	if (Object.keys(saveTransfer).length < 1) {
+		return res.status(408).json({
+			status: res.statusCode,
+			method: req.method,
+			message: 'transfer balance failed, server is busy'
+		})
+	}
 
 	const checkSaldoFrom: SaldoDTO[] = await knex<SaldoDTO>('saldo')
 		.where({ user_id: checkUserIdFrom[0].user_id })
@@ -88,6 +88,13 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 			message: 'transfer balance failed, server is busy'
 		})
 	}
+
+	await knex<LogsDTO>('logs').insert({
+		user_id: checkUserIdFrom[0].user_id,
+		log_status: 'TRANSFER_SALDO',
+		log_time: dateFormat(new Date()),
+		created_at: new Date()
+	})
 
 	const template: ITransferMail = tempMailTransfer(checkUserIdFrom[0].email, checkUserIdTo[0].email, transfer_amount)
 	const sgResponse: [ClientResponse, any] = await sgMail.send(template)
