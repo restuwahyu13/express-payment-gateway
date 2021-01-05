@@ -36,21 +36,21 @@ export interface IFindBalanceHistory {
 export interface INewFindBalanceHistory {
 	readonly user_id: number
 	readonly saldoTopup: string
-	readonly metodePembayaran: string
-	readonly tanggalTopup: any
+	readonly nominal_topup: string
+	readonly tanggal_topup: any
 }
 
 type NewBalance = {
 	readonly user_id: number
 	readonly email: string
-	readonly kodeTransfer: number
-	readonly jumlahUang: string
-	readonly jumlahPenarikan: string
-	readonly waktuPenarikan: any
-	readonly historyTopupSaldo: INewFindBalanceHistory[]
-	readonly tanggalPembuatan: any
+	readonly kode_transfer: number
+	readonly jumlah_uang: string
+	readonly jumlah_penarikan: string
+	readonly waktu_penarikan: any
+	readonly topup_history: INewFindBalanceHistory[]
+	readonly tanggal_pembuatan: any
 }
 
 export interface INewFindBalance {
-	readonly reportSaldoUser: NewBalance
+	readonly saldo_history: NewBalance
 }

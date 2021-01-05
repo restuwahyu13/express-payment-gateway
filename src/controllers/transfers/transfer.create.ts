@@ -108,11 +108,9 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 		})
 	}
 
-	return res.status(200).json({
+	return res.status(201).json({
 		status: res.statusCode,
 		method: req.method,
-		message: `transfer balance successfully, please check your email ${checkUserIdFrom[0].email}`,
-		fromBalance: findSaldoFrom[0].total_balance,
-		toBalance: findSaldoTo[0].total_balance
+		message: `transfer balance successfully, please check your email ${checkUserIdFrom[0].email}`
 	})
 }

@@ -2,52 +2,68 @@ import { Request, Response } from 'express'
 import knex from '../../database'
 import { TopupsDTO } from '../../dto/dto.topups'
 import { UsersDTO } from '../../dto/dto.users'
+import { SaldoHistoryDTO } from '../../dto/dto.saldoHistory'
 import { dateFormat } from '../../utils/util.date'
 import { rupiahFormatter } from '../../utils/util.rupiah'
-import { IUserTopupAll, IUserTopup } from '../../interface/i.topup'
+import {
+	IFindTopup,
+	IFindNewTopup,
+	IFindParamsTopup,
+	IFindTopupHistory,
+	IFindNewTopupHistory,
+	IFindParamsHistoryTopup
+} from '../../interface/i.topup'
 
 export const resultTopup = async (req: Request, res: Response): Promise<Response<any>> => {
-	const findTopup: IUserTopupAll[] = await knex<UsersDTO, TopupsDTO>('topups')
-		.join('users', 'topups.user_id', 'users.user_id')
+	const findBalance: IFindTopup[] = await knex<UsersDTO, UsersDTO>('topups')
+		.join('users', 'users.user_id', 'topups.user_id')
 		.select([
-			'users.user_id',
+			'topups.user_id',
 			'users.email',
-			'users.photo',
 			'users.noc_transfer',
-			'users.first_login',
-			'users.last_login',
-			'topups.topup_id',
-			'topups.topup_no',
-			'topups.topup_amount',
-			'topups.topup_method',
-			'topups.topup_time'
+			knex.raw('SUM (topups.topup_amount) as total_topup_amount')
 		])
-		.where({ topup_id: req.params.id })
+		.where({ 'topups.user_id': req.params.id })
+		.groupBy(['topups.user_id', 'users.email', 'users.noc_transfer'])
+		.orderBy('topups.user_id', 'asc')
 
-	if (findTopup.length < 1) {
-		return res.status(404).json({
-			status: res.statusCode,
-			method: req.method,
-			message: 'topup id is not exist, in the system'
-		})
-	}
+	const mergeFindBalanceHistory = findBalance.map(
+		async (val: IFindParamsTopup): Promise<Array<IFindNewTopupHistory>> => {
+			const findBalanceHistory: IFindTopupHistory[] = await knex<SaldoHistoryDTO, TopupsDTO>('topups')
+				.select(['topup_id', 'user_id', 'topup_no', 'topup_amount', 'topup_method', 'topup_time'])
+				.where({ user_id: val.user_id })
+				.groupBy(['topup_id', 'user_id', 'topup_no', 'topup_amount', 'topup_method', 'topup_time'])
+				.orderBy('user_id', 'asc')
 
-	const newTopupData = findTopup.map(
-		(val): IUserTopup => {
-			return {
-				topup_history: {
+			const newBalanceHistory = findBalanceHistory.map(
+				(val: IFindParamsHistoryTopup): IFindNewTopupHistory => ({
 					topup_id: val.topup_id,
 					kode_topup: val.topup_no,
-					jumlah_topup: rupiahFormatter(val.topup_amount.toString()),
+					nominal_topup: rupiahFormatter(val.topup_amount.toString()),
 					metode_pembayaran: val.topup_method,
-					user: {
-						user_id: val.user_id,
-						email: val.email,
-						kode_transfer: val.noc_transfer,
-						pertama_masuk: dateFormat(val.first_login).format('llll'),
-						terakhir_masuk: val.last_login
-					},
 					tanggal_topup: dateFormat(val.topup_time).format('llll')
+				})
+			)
+
+			const mergeData: Array<IFindNewTopupHistory> = []
+			return mergeData.concat(newBalanceHistory)
+		}
+	)
+
+	const storeFindBalanceHistory: any[] = []
+	for (const i of mergeFindBalanceHistory) {
+		storeFindBalanceHistory.push(await i)
+	}
+
+	const newBalanceUsers = findBalance.map(
+		(val: IFindParamsTopup, i: number): IFindNewTopup => {
+			return {
+				topup_history: {
+					user_id: val.user_id,
+					email: val.email,
+					kode_transfer: val.noc_transfer,
+					total_nominal_topup: rupiahFormatter(val.total_topup_amount.toString()),
+					total_topup: storeFindBalanceHistory[i]
 				}
 			}
 		}
@@ -57,6 +73,6 @@ export const resultTopup = async (req: Request, res: Response): Promise<Response
 		status: res.statusCode,
 		method: req.method,
 		message: 'data already to use',
-		data: newTopupData[0]
+		data: newBalanceUsers[0]
 	})
 }
