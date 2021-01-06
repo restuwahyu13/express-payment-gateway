@@ -5,19 +5,19 @@ import knex from '../../database'
 import { TopupsDTO } from '../../dto/dto.topups'
 import { SaldoDTO } from '../../dto/dto.saldo'
 import { LogsDTO } from '../../dto/dto.logs'
-import { uniqueOrderNumber } from '../../utils/util.uuid'
 import { UsersDTO } from '../../dto/dto.users'
+import { TransferDTO } from '../../dto/dto.transfer'
+import { uniqueOrderNumber } from '../../utils/util.uuid'
 import { tempMailTopup } from '../../templates/template.topup'
 import { dateFormat } from '../../utils/util.date'
 import { ITopupMail } from '../../interface/i.tempmail'
-import { IFindBalanceHistory } from '../../interface/i.saldo'
 
 export const createTopup = async (req: Request, res: Response): Promise<Response<any>> => {
 	if (req.body.topup_amount <= 49000) {
 		return res.status(403).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'mininum top up balance Rp 50.000'
+			message: 'mininum topup balance Rp 50.000'
 		})
 	}
 
@@ -60,15 +60,40 @@ export const createTopup = async (req: Request, res: Response): Promise<Response
 			created_at: new Date()
 		})
 	} else {
-		const findBalanceHistory: IFindBalanceHistory[] = await knex<TopupsDTO>('topups')
-			.select(['user_id', knex.raw('SUM(topup_amount) as total_balance')])
-			.where({ user_id: checkSaldoUserId[0].user_id })
-			.groupBy(['user_id'])
+		const findTransferHistory: TransferDTO[][] = await knex<TransferDTO>('transfer')
+			.select(['transfer_from', knex.raw('SUM(transfer_amount) as transfer_amount'), 'transfer_time'])
+			.where({ transfer_from: checkSaldoUserId[0].user_id })
+			.groupBy('transfer_from', 'transfer_time')
+			.limit(1)
+			.orderBy('transfer_time', 'desc')
 
-		const { user_id, total_balance }: IFindBalanceHistory = findBalanceHistory[0]
-		await knex<SaldoDTO>('saldo')
-			.where({ user_id: user_id })
-			.update({ total_balance: total_balance, updated_at: new Date() })
+		if (findTransferHistory.length < 0) {
+			console.log('tes 1')
+			const findBalanceHistory: TopupsDTO[] = await knex<TopupsDTO>('topups')
+				.select(['user_id', knex.raw('SUM(topup_amount) as topup_amount')])
+				.where({ user_id: checkSaldoUserId[0].user_id })
+				.groupBy(['user_id'])
+
+			await knex<SaldoDTO>('saldo')
+				.where({ user_id: findBalanceHistory[0].user_id })
+				.update({ total_balance: findBalanceHistory[0].topup_amount, updated_at: new Date() })
+		} else {
+			const findBalanceHistory: TopupsDTO[] = await knex<TopupsDTO>('topups')
+				.select(['user_id', knex.raw('SUM(topup_amount) as topup_amount'), 'topup_time'])
+				.where({ user_id: checkSaldoUserId[0].user_id })
+				.groupBy(['user_id', 'topup_time'])
+				.limit(1)
+				.orderBy('topup_time', 'desc')
+
+			const findSaldo: SaldoDTO[] = await knex<SaldoDTO>('saldo')
+				.select(['user_id', knex.raw(`SUM(total_balance + ${findBalanceHistory[0].topup_amount}) as total_balance`)])
+				.where({ user_id: findBalanceHistory[0].user_id })
+				.groupBy('user_id')
+
+			await knex<SaldoDTO>('saldo')
+				.where({ user_id: findSaldo[0].user_id })
+				.update({ total_balance: findSaldo[0].total_balance, updated_at: new Date() })
+		}
 	}
 
 	await knex<LogsDTO>('logs').insert({

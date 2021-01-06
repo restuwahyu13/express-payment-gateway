@@ -47,10 +47,8 @@ export interface IFindNewBalance {
 
 export interface IFindBalanceHistory {
 	readonly user_id: number
-	readonly balance: number
-	readonly topup_method: string
 	readonly total_balance: number
-	readonly created_at: any
+	readonly topup_time: any
 }
 
 export interface IFindParamsBalanceHistory {
