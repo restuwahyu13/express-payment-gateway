@@ -30,13 +30,15 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 		})
 	}
 
-	const saveTransfer: TransferDTO[] = await knex<TransferDTO>('transfer').insert({
-		transfer_from: checkUserIdFrom[0].user_id,
-		transfer_to: checkUserIdTo[0].user_id,
-		transfer_amount: transfer_amount,
-		transfer_time: dateFormat(new Date()),
-		created_at: new Date()
-	})
+	const saveTransfer: TransferDTO[] = await knex<TransferDTO>('transfer')
+		.insert({
+			transfer_from: checkUserIdFrom[0].user_id,
+			transfer_to: checkUserIdTo[0].user_id,
+			transfer_amount: transfer_amount,
+			transfer_time: dateFormat(new Date()),
+			created_at: new Date()
+		})
+		.returning(['transfer_amount'])
 
 	if (Object.keys(saveTransfer).length < 1) {
 		return res.status(408).json({
@@ -60,11 +62,11 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 
 	const findSaldoFrom: SaldoDTO[] = await knex<SaldoDTO>('saldo')
 		.where({ user_id: checkUserIdFrom[0].user_id })
-		.select(knex.raw(`SUM(total_balance - ${transfer_amount}) as total_balance`))
+		.select(knex.raw(`SUM(total_balance - ${saveTransfer[0].transfer_amount}) as total_balance`))
 
 	const findSaldoTo: SaldoDTO[] = await knex<SaldoDTO>('saldo')
 		.where({ user_id: checkUserIdTo[0].user_id })
-		.select(knex.raw(`SUM(total_balance + ${transfer_amount}) as total_balance`))
+		.select(knex.raw(`SUM(total_balance + ${saveTransfer[0].transfer_amount}) as total_balance`))
 
 	if (!findSaldoFrom[0] || !findSaldoTo[0]) {
 		return res.status(408).json({
@@ -97,7 +99,11 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 		created_at: new Date()
 	})
 
-	const template: ITransferMail = tempMailTransfer(checkUserIdFrom[0].email, checkUserIdTo[0].email, transfer_amount)
+	const template: ITransferMail = tempMailTransfer(
+		checkUserIdFrom[0].email,
+		checkUserIdTo[0].email,
+		saveTransfer[0].transfer_amount
+	)
 	const sgResponse: [ClientResponse, any] = await sgMail.send(template)
 
 	if (!sgResponse) {

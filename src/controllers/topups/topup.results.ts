@@ -27,13 +27,21 @@ export const resultsTopup = async (req: Request, res: Response): Promise<Respons
 		.groupBy(['topups.user_id', 'users.email', 'users.noc_transfer'])
 		.orderBy('topups.user_id', 'asc')
 
+	if (findTopupAmount.length < 1) {
+		return res.status(404).json({
+			status: res.statusCode,
+			method: req.method,
+			message: 'data is not exist'
+		})
+	}
+
 	const findMergeTopupAmount = findTopupAmount.map(
 		async (val: IFindParamsTopup): Promise<Array<IFindNewTopupHistory>> => {
 			const findTopupAmountHistory: IFindTopupHistory[] = await knex<SaldoHistoryDTO, TopupsDTO>('topups')
 				.select(['topup_id', 'user_id', 'topup_no', 'topup_amount', 'topup_method', 'topup_time'])
 				.where({ user_id: val.user_id })
 				.groupBy(['topup_id', 'user_id', 'topup_no', 'topup_amount', 'topup_method', 'topup_time'])
-				.orderBy('user_id', 'asc')
+				.orderBy('topup_time', 'desc')
 
 			const findNewTopupAmountHistory = findTopupAmountHistory.map(
 				(val: IFindParamsHistoryTopup): IFindNewTopupHistory => ({
@@ -44,33 +52,31 @@ export const resultsTopup = async (req: Request, res: Response): Promise<Respons
 					tanggal_topup: dateFormat(val.topup_time).format('llll')
 				})
 			)
-
-			const mergeTopupAmount: Array<IFindNewTopupHistory> = []
-			return mergeTopupAmount.concat(findNewTopupAmountHistory)
+			return findNewTopupAmountHistory
 		}
 	)
 
-	const findStoreTopupAmountHistory: any[] = []
-	for (const i of findMergeTopupAmount) {
-		findStoreTopupAmountHistory.push(await i)
-	}
-
 	const findNewTopupAmountUser = findTopupAmount.map(
-		(val: IFindParamsTopup, i: number): IFindNewTopup => ({
+		async (val: IFindParamsTopup, i: number): Promise<IFindNewTopup> => ({
 			topup_history: {
 				user_id: val.user_id,
 				email: val.email,
 				kode_transfer: val.noc_transfer,
 				total_nominal_topup: rupiahFormatter(val.total_topup_amount.toString()),
-				total_topup: findStoreTopupAmountHistory[i]
+				total_topup: await findMergeTopupAmount[i]
 			}
 		})
 	)
+
+	const findStoreTopupAmountHistory: any[] = []
+	for (const i of findNewTopupAmountUser) {
+		findStoreTopupAmountHistory.push(await i)
+	}
 
 	return res.status(200).json({
 		status: res.statusCode,
 		method: req.method,
 		message: 'data already to use',
-		data: findNewTopupAmountUser
+		data: findStoreTopupAmountHistory
 	})
 }

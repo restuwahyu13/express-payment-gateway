@@ -6,14 +6,7 @@ import { SaldoDTO } from '../../dto/dto.saldo'
 import { UsersDTO } from '../../dto/dto.users'
 import { rupiahFormatter } from '../../utils/util.rupiah'
 import { dateFormat } from '../../utils/util.date'
-import {
-	IFindBalance,
-	INewFindBalance,
-	IParamsFindBalance,
-	IFindBalanceHistory,
-	INewFindBalanceHistory,
-	IParamsFindBalanceHistory
-} from '../../interface/i.saldo'
+import { IFindBalance, IFindParamsBalance, IFindNewBalance } from '../../interface/i.saldo'
 
 export const resultSaldo = async (req: Request, res: Response): Promise<Response<any>> => {
 	// const findBalanceHistory: IFindBalanceHistory[] = await knex<SaldoHistoryDTO, TopupsDTO>('saldo_history')
@@ -29,18 +22,20 @@ export const resultSaldo = async (req: Request, res: Response): Promise<Response
 	// 		message: 'user id is not exist, failed to find saldo'
 	// 	})
 	// }
-	// const findBalance: IFindBalance[] = await knex<SaldoDTO, UsersDTO>('saldo')
-	// 	.join('users', 'users.user_id', 'saldo.user_id')
-	// 	.select([
-	// 		'users.user_id as saldo_user_id',
-	// 		'users.email',
-	// 		'users.noc_transfer',
-	// 		'saldo.total_balance',
-	// 		'saldo.withdraw_amount',
-	// 		'saldo.withdraw_time',
-	// 		'saldo.created_at as saldo_created'
-	// 	])
-	// 	.where({ 'users.user_id': findBalanceHistory[0].user_id })
+
+	const findBalance: IFindBalance[] = await knex<SaldoDTO, UsersDTO>('saldo')
+		.join('users', 'users.user_id', 'saldo.user_id')
+		.select([
+			'users.user_id as saldo_user_id',
+			'users.email',
+			'users.noc_transfer',
+			'saldo.total_balance',
+			'saldo.withdraw_amount',
+			'saldo.withdraw_time',
+			'saldo.created_at as saldo_created'
+		])
+		.where({ 'users.user_id': req.params.id })
+
 	// const newFindBalanceHistory = findBalanceHistory.map(
 	// 	(val: IParamsFindBalanceHistory): INewFindBalanceHistory => ({
 	// 		user_id: val.user_id,
@@ -49,26 +44,27 @@ export const resultSaldo = async (req: Request, res: Response): Promise<Response
 	// 		tanggal_topup: dateFormat(val.created_at).format('llll')
 	// 	})
 	// )
-	// const newBalanceUsers = findBalance.map(
-	// 	(val: IParamsFindBalance): INewFindBalance => {
-	// 		return {
-	// 			saldo_history: {
-	// 				user_id: val.saldo_user_id,
-	// 				email: val.email,
-	// 				kode_transfer: val.noc_transfer,
-	// 				jumlah_uang: rupiahFormatter(val.total_balance.toString()),
-	// 				jumlah_penarikan: rupiahFormatter(val.withdraw_amount.toString()),
-	// 				waktu_penarikan: dateFormat(val.withdraw_time).format('llll'),
-	// 				topup_history: newFindBalanceHistory,
-	// 				tanggal_pembuatan: dateFormat(val.saldo_created).format('llll')
-	// 			}
-	// 		}
-	// 	}
-	// )
+
+	const newBalanceUsers = findBalance.map(
+		(val: IFindParamsBalance): IFindNewBalance => {
+			return {
+				saldo_history: {
+					user_id: val.saldo_user_id,
+					email: val.email,
+					kode_transfer: val.noc_transfer,
+					jumlah_uang: rupiahFormatter(val.total_balance.toString()),
+					jumlah_penarikan: rupiahFormatter(val.withdraw_amount.toString()),
+					waktu_penarikan: dateFormat(val.withdraw_time).format('llll')
+					// topup_history: newFindBalanceHistory,
+					// tanggal_pembuatan: dateFormat(val.saldo_created).format('llll')
+				}
+			}
+		}
+	)
 	return res.status(200).json({
 		status: res.statusCode,
 		method: req.method,
-		message: 'data already to use'
-		// data: newBalanceUsers[0]
+		message: 'data already to use',
+		data: newBalanceUsers[0]
 	})
 }

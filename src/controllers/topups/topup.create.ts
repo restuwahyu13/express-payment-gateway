@@ -4,7 +4,6 @@ import { ClientResponse } from '@sendgrid/client/src/response'
 import knex from '../../database'
 import { TopupsDTO } from '../../dto/dto.topups'
 import { SaldoDTO } from '../../dto/dto.saldo'
-import { SaldoHistoryDTO } from '../../dto/dto.saldoHistory'
 import { LogsDTO } from '../../dto/dto.logs'
 import { uniqueOrderNumber } from '../../utils/util.uuid'
 import { UsersDTO } from '../../dto/dto.users'
@@ -51,13 +50,7 @@ export const createTopup = async (req: Request, res: Response): Promise<Response
 		})
 	}
 
-	const { topup_id, user_id, topup_amount, topup_method }: TopupsDTO = saveTopup[0]
-	await knex<SaldoHistoryDTO>('saldo_history').insert({
-		topup_id: topup_id,
-		balance: topup_amount,
-		created_at: new Date()
-	})
-
+	const { user_id, topup_amount, topup_method }: TopupsDTO = saveTopup[0]
 	const checkSaldoUserId: SaldoDTO[] = await knex<SaldoDTO>('saldo').where({ user_id: user_id }).select(['user_id'])
 
 	if (checkSaldoUserId.length < 1) {
@@ -67,11 +60,10 @@ export const createTopup = async (req: Request, res: Response): Promise<Response
 			created_at: new Date()
 		})
 	} else {
-		const findBalanceHistory: IFindBalanceHistory[] = await knex<SaldoHistoryDTO, TopupsDTO>('saldo_history')
-			.join('topups', 'topups.topup_id', 'saldo_history.topup_id')
-			.select(['topups.user_id', knex.raw('SUM(saldo_history.balance) as total_balance')])
+		const findBalanceHistory: IFindBalanceHistory[] = await knex<TopupsDTO>('topups')
+			.select(['user_id', knex.raw('SUM(topup_amount) as total_balance')])
 			.where({ user_id: checkSaldoUserId[0].user_id })
-			.groupBy(['topups.user_id'])
+			.groupBy(['user_id'])
 
 		const { user_id, total_balance }: IFindBalanceHistory = findBalanceHistory[0]
 		await knex<SaldoDTO>('saldo')

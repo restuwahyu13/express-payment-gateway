@@ -55,7 +55,7 @@ Find Topup Amount Teritory
 
 type FindTopup = {
 	readonly user_id: number
-	readonly nominal_topup: string
+	readonly nominal_topup: string | number
 	readonly metode_pembayaran: string
 	readonly tanggal_topup: any
 }
@@ -66,7 +66,7 @@ export interface IFindTopup {
 	readonly email: string
 	readonly noc_transfer: number
 	readonly total_topup_amount: number
-	readonly total_topup: FindTopup[]
+	readonly total_topup: FindTopup
 }
 
 export interface IFindParamsTopup {
@@ -79,9 +79,8 @@ export interface IFindParamsTopup {
 
 type FindSubTopupAmount = {
 	readonly topup_id: number
-	readonly user_id: number
 	readonly kode_topup: string
-	readonly nominal_topup: number
+	readonly nominal_topup: string | number
 	readonly metode_pembayaran: string
 	readonly tanggal_topup: any
 }
@@ -125,7 +124,7 @@ export interface IFindTopupHistory {
 export interface IFindNewTopupHistory {
 	readonly topup_id: number
 	readonly kode_topup: string
-	readonly nominal_topup: string
+	readonly nominal_topup: string | number
 	readonly metode_pembayaran: string
 	readonly tanggal_topup: any
 }

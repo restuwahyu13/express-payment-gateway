@@ -5,25 +5,28 @@ import { UsersDTO } from '../../dto/dto.users'
 import { dateFormat } from './../../utils/util.date'
 import { rupiahFormatter } from './../../utils/util.rupiah'
 import {
-	IFindSaldoFrom,
-	IFindTransferHistory,
-	IFindParamsTransferHistory,
-	IFindNewTransferHistory
+	IFindParamsTransferFrom,
+	IFindTransferFrom,
+	IFindNewTransferFrom,
+	IFindTransferTo,
+	IFindNewTransferTo,
+	IFindNewParamsTransferTo
 } from '../../interface/i.transfer'
 
 export const resultsTransfer = async (req: Request, res: Response): Promise<Response<any>> => {
-	const findSaldoFrom: IFindSaldoFrom[] = await knex<TransferDTO, UsersDTO>('transfer')
+	const findTransferSaldoFrom: IFindTransferFrom[] = await knex<TransferDTO, UsersDTO>('transfer')
 		.join('users', 'users.user_id', 'transfer.transfer_from')
 		.select([
 			'users.user_id',
 			'users.email',
 			'users.noc_transfer',
-			'transfer.transfer_amount',
-			'transfer.transfer_to',
-			'transfer.transfer_time'
+			knex.raw('SUM(transfer.transfer_amount) as total_transfer_amount'),
+			'transfer.transfer_to'
 		])
+		.groupBy(['users.user_id', 'users.email', 'users.noc_transfer', 'transfer.transfer_to'])
+		.orderBy('users.user_id', 'asc')
 
-	if (findSaldoFrom.length < 1) {
+	if (findTransferSaldoFrom.length < 1) {
 		return res.status(404).json({
 			status: res.statusCode,
 			method: req.method,
@@ -31,49 +34,63 @@ export const resultsTransfer = async (req: Request, res: Response): Promise<Resp
 		})
 	}
 
-	const findSaldoTo: UsersDTO[] = await knex<UsersDTO>('users').select([
-		'user_id',
-		'email',
-		'noc_transfer',
-		'first_login',
-		'last_login'
-	])
+	const findTransferSaldoTo = findTransferSaldoFrom.map(
+		async (): Promise<Array<IFindNewTransferTo>> => {
+			const findSaldoTo: IFindTransferTo[] = await knex<TransferDTO, UsersDTO>('transfer')
+				.join('users', 'users.user_id', 'transfer.transfer_to')
+				.select([
+					'users.user_id',
+					'users.email',
+					'users.noc_transfer',
+					'transfer.transfer_id',
+					'transfer.transfer_amount',
+					'transfer.transfer_time'
+				])
+				.groupBy([
+					'users.user_id',
+					'users.email',
+					'users.noc_transfer',
+					'transfer.transfer_id',
+					'transfer.transfer_amount',
+					'transfer.transfer_time'
+				])
+				.orderBy('transfer.transfer_time', 'desc')
 
-	const transferHistory = findSaldoFrom.map(
-		(): IFindTransferHistory => {
-			const { user_id, email, noc_transfer, first_login, last_login }: UsersDTO = findSaldoTo[0]
-			return Object.defineProperty(findSaldoFrom[0], 'transfer_to', {
-				value: { user_id, email, noc_transfer, first_login, last_login },
-				writable: true,
-				enumerable: true
-			})
-		}
-	)
-
-	const newTransferHistory = transferHistory.map(
-		(val: IFindParamsTransferHistory): IFindNewTransferHistory => {
-			return {
-				transfer_history: {
-					user_id: val.user_id,
+			const newfindSaldoTo = findSaldoTo.map(
+				(val: IFindNewParamsTransferTo): IFindNewTransferTo => ({
+					transfer_id: val.transfer_id,
 					email: val.email,
 					kode_transfer: val.noc_transfer,
-					jumlah_transfer: rupiahFormatter(val.transfer_amount.toString()),
-					transfer_ke: {
-						user_id: val.transfer_to.user_id,
-						email: val.transfer_to.email,
-						pertama_masuk: dateFormat(val.first_login).format('llll'),
-						terakhir_masuk: dateFormat(val.last_login).format('llll')
-					},
+					nominal_transfer: rupiahFormatter(val.transfer_amount.toString()),
 					tanggal_transfer: dateFormat(val.transfer_time).format('llll')
-				}
-			}
+				})
+			)
+
+			return newfindSaldoTo
 		}
 	)
+
+	const newTransferSaldo = findTransferSaldoFrom.map(
+		async (val: IFindParamsTransferFrom, i: number): Promise<IFindNewTransferFrom> => ({
+			transfer_history: {
+				user_id: val.user_id,
+				email: val.email,
+				kode_transfer: val.noc_transfer,
+				total_nominal_transfer: rupiahFormatter(val.total_transfer_amount.toString()),
+				total_transfer: await findTransferSaldoTo[i]
+			}
+		})
+	)
+
+	const transferSaldo: any[] = []
+	for (const i of newTransferSaldo) {
+		transferSaldo.push(await i)
+	}
 
 	return res.status(200).json({
 		status: res.statusCode,
 		method: req.method,
 		message: 'data already to use',
-		data: newTransferHistory
+		data: transferSaldo
 	})
 }
