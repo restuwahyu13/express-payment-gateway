@@ -1,7 +1,7 @@
 {
-	"name": "crawlers-bot-wa",
+	"name": "express-payment-gateway",
 	"version": "1.0.0",
-	"description": "chatbot whatsapp web for programming tutorial",
+	"description": "simple impelementation payment gateway using express",
 	"main": "dist/server.js",
 	"scripts": {
 		"cleanup": "rimraf dist",
@@ -16,8 +16,8 @@
 		"url": "restuwahyu13"
 	},
 	"keywords": [
-		"wabot",
-		"whatsapp"
+		"express",
+		"node"
 	],
 	"author": "restuwahyu13",
 	"license": "MIT",
