@@ -20,7 +20,7 @@
 		"camelcase": 0,
 		"indent": 0,
 		"no-tabs": 0,
-		"@typescript-eslint/no-explicit-any": 1
+		"@typescript-eslint/no-explicit-any": 0
 	},
 	"settings": {
 		"jest": {

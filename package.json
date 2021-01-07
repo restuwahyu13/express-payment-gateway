@@ -6,7 +6,7 @@
 	"scripts": {
 		"cleanup": "rimraf dist",
 		"compiler": "tsc --pretty",
-		"compiler:watch": "tsc --watch",
+		"compiler:watch": "tsc --watch && node/dist/server.js",
 		"build": "npm run cleanup && npm run compiler",
 		"start": "node dist/server.js",
 		"dev": "nodemon -w *.ts -e ts -x ts-node --files -H -T server.ts"

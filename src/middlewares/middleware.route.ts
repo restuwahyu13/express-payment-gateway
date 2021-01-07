@@ -4,6 +4,7 @@ import topupRoute from '../routes/route.topup'
 import transferRoute from '../routes/route.transfer'
 import saldoRoute from '../routes/route.saldo'
 import refreshRoute from '../routes/route.refresh'
+import withdrawRoute from '../routes/route.withdraw'
 
 export const routeMiddleware = (app: Application): void => {
 	app.use('/api/v1', userRoute)
@@ -11,4 +12,5 @@ export const routeMiddleware = (app: Application): void => {
 	app.use('/api/v1', transferRoute)
 	app.use('/api/v1', saldoRoute)
 	app.use('/api/v1', refreshRoute)
+	app.use('/api/v1', withdrawRoute)
 }

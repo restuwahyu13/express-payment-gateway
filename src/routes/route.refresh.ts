@@ -14,8 +14,8 @@ router.post('/refresh-token', (req: Request, res: Response) => {
 	})
 })
 
-router.get('/test/protect', authJwt(), (req: Request, res: Response) => {
-	res.status(200).json({ data: req['user'], message: 'aim in proteced route' })
+router.get('/test/protect', authJwt(), (req: Request | any, res: Response) => {
+	res.status(200).json({ data: req.user, message: 'aim in proteced route' })
 })
 
 router.post('/test/login', (req: Request, res: Response) => {

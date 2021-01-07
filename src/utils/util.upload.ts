@@ -4,13 +4,13 @@ import { resolve } from 'path'
 import { existsSync, unlink } from 'fs'
 
 const diskStorage: StorageEngine = multer.diskStorage({
-	destination: (req: Request, file: Express.Multer.File, done): any => {
+	destination: (req: Request, file: Express.Multer.File, done): void => {
 		if (!file) return done(new Error('Upload file error'), null)
 
 		const fileExits = existsSync(resolve(process.cwd(), `src/images/${file.originalname}`))
 		if (!fileExits) return done(null, resolve(process.cwd(), 'src/images'))
 
-		unlink(resolve(process.cwd(), `src/images/${file.originalname}`), (error: any) => {
+		unlink(resolve(process.cwd(), `src/images/${file.originalname}`), (error: any): void => {
 			if (error) return done(null, error)
 			return done(null, resolve(process.cwd(), 'src/images'))
 		})

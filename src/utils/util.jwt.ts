@@ -51,7 +51,7 @@ export const verifySignAccessToken = () => (req: Request, res: Response, token: 
 
 export const signRefreshToken = () => (req: Request, res: Response): string | any => {
 	try {
-		const getToken: string = req.cookies['refreshToken']
+		const getToken: string = req.cookies.refreshToken
 
 		if (Base64.isValid(getToken) && getToken) {
 			const decodedToken: string = Base64.decode(getToken)
