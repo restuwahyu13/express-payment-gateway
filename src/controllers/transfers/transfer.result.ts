@@ -50,7 +50,7 @@ export const resultTransfer = async (req: Request, res: Response): Promise<Respo
 					'transfer.transfer_amount',
 					'transfer.transfer_time'
 				])
-				.where({ 'users.user_id': val.transfer_to })
+				.where({ 'transfer.transfer_to': val.transfer_to })
 				.groupBy([
 					'users.user_id',
 					'users.email',

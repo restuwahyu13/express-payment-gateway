@@ -8,9 +8,10 @@ import {
 	IFindParamsTransferFrom,
 	IFindTransferFrom,
 	IFindNewTransferFrom,
+	IFindParamsTransferTo,
+	IFindNewParamsTransferTo,
 	IFindTransferTo,
-	IFindNewTransferTo,
-	IFindNewParamsTransferTo
+	IFindNewTransferTo
 } from '../../interface/i.transfer'
 
 export const resultsTransfer = async (req: Request, res: Response): Promise<Response<any>> => {
@@ -35,7 +36,7 @@ export const resultsTransfer = async (req: Request, res: Response): Promise<Resp
 	}
 
 	const findTransferSaldoTo = findTransferSaldoFrom.map(
-		async (): Promise<Array<IFindNewTransferTo>> => {
+		async (val: IFindParamsTransferTo): Promise<Array<IFindNewTransferTo>> => {
 			const findSaldoTo: IFindTransferTo[] = await knex<TransferDTO, UsersDTO>('transfer')
 				.join('users', 'users.user_id', 'transfer.transfer_to')
 				.select([
@@ -46,6 +47,7 @@ export const resultsTransfer = async (req: Request, res: Response): Promise<Resp
 					'transfer.transfer_amount',
 					'transfer.transfer_time'
 				])
+				.where({ 'users.user_id': val.user_id })
 				.groupBy([
 					'users.user_id',
 					'users.email',

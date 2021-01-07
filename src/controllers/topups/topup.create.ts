@@ -68,7 +68,6 @@ export const createTopup = async (req: Request, res: Response): Promise<Response
 			.orderBy('transfer_time', 'desc')
 
 		if (findTransferHistory.length < 0) {
-			console.log('tes 1')
 			const findBalanceHistory: TopupsDTO[] = await knex<TopupsDTO>('topups')
 				.select(['user_id', knex.raw('SUM(topup_amount) as topup_amount')])
 				.where({ user_id: checkSaldoUserId[0].user_id })

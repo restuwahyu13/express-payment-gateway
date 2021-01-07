@@ -12,7 +12,7 @@ export const tempMailWithdraw = (from: string, amount: number, saldo: number): I
 	return {
 		from: 'admin@bfintech.com',
 		to: from,
-		subject: 'Transfer Saldo Successfully',
+		subject: 'Withdraw Saldo Successfully',
 		html: `
         <!DOCTYPE html>
         <html lang="en">
@@ -43,7 +43,7 @@ nter;
                     top: 30px;
                 }
                 .container .logo {
-                    background: yellow;
+                    background: black;
                     width: 360px;
                     height: 40px;
                     border-radius: 10px;
@@ -94,7 +94,7 @@ nter;
                     width: 150px;
                     height: 50px;
                     border-radius: 10px;
-                    background: yellow;
+                    background: black;
                     position: relative;
                     top: 10px;
                     font-weight: bold;
@@ -109,7 +109,7 @@ nter;
                     top: 55px;
                 }
                 .footer-logo{
-                    background: yellow;
+                    background: black;
                     color: #f5f5f5;
                     width: 360px;
                     height: 40px;

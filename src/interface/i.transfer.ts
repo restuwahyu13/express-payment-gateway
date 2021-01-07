@@ -56,6 +56,7 @@ export interface IFindTransferTo {
 }
 
 export interface IFindParamsTransferTo {
+	readonly user_id: number
 	readonly transfer_to: number
 }
 
