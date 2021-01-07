@@ -56,7 +56,9 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 		return res.status(403).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'your balance is not enough ' + rupiahFormatter(checkSaldoFrom[0].total_balance.toString())
+			message: `${checkUserIdFrom[0].email} your balance is insufficient ${rupiahFormatter(
+				checkSaldoFrom[0].total_balance.toString()
+			)}`
 		})
 	}
 

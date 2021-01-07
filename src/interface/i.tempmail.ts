@@ -32,3 +32,10 @@ export interface ITransferMail {
 	readonly subject: string
 	readonly html: string
 }
+
+export interface IWithdrawMail {
+	readonly from: string
+	readonly to: string
+	readonly subject: string
+	readonly html: string
+}

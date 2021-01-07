@@ -46,7 +46,7 @@ export const createTopup = async (req: Request, res: Response): Promise<Response
 		return res.status(408).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'top up balance failed, server is busy'
+			message: 'topup balance failed, server is busy'
 		})
 	}
 
