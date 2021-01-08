@@ -22,13 +22,14 @@ export const resultsTransfer = async (req: Request, res: Response): Promise<Resp
 			'users.email',
 			'users.noc_transfer',
 			knex.raw('SUM(transfer.transfer_amount) as total_transfer_amount'),
+			'transfer.transfer_from',
 			'transfer.transfer_to'
 		])
-		.groupBy(['users.user_id', 'users.email', 'users.noc_transfer', 'transfer.transfer_to'])
+		.groupBy(['users.user_id', 'users.email', 'users.noc_transfer', 'transfer.transfer_from', 'transfer.transfer_to'])
 		.orderBy('users.user_id', 'asc')
 
 	if (findTransferSaldoFrom.length < 1) {
-		return res.status(404).json({
+		return res.status(200).json({
 			status: res.statusCode,
 			method: req.method,
 			message: 'data is not exist'
@@ -40,19 +41,19 @@ export const resultsTransfer = async (req: Request, res: Response): Promise<Resp
 			const findSaldoTo: IFindTransferTo[] = await knex<TransferDTO, UsersDTO>('transfer')
 				.join('users', 'users.user_id', 'transfer.transfer_to')
 				.select([
-					'users.user_id',
+					'transfer.transfer_to',
+					'transfer.transfer_id',
 					'users.email',
 					'users.noc_transfer',
-					'transfer.transfer_id',
-					'transfer.transfer_amount',
+					'transfer_amount',
 					'transfer.transfer_time'
 				])
-				.where({ 'users.user_id': val.user_id })
+				.andWhere({ 'transfer.transfer_to': val.transfer_to, 'transfer.transfer_from': val.transfer_from })
 				.groupBy([
-					'users.user_id',
+					'transfer.transfer_to',
+					'transfer.transfer_id',
 					'users.email',
 					'users.noc_transfer',
-					'transfer.transfer_id',
 					'transfer.transfer_amount',
 					'transfer.transfer_time'
 				])
@@ -93,6 +94,6 @@ export const resultsTransfer = async (req: Request, res: Response): Promise<Resp
 		status: res.statusCode,
 		method: req.method,
 		message: 'data already to use',
-		data: transferSaldo
+		data: await transferSaldo
 	})
 }

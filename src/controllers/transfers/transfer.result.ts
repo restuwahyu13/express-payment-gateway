@@ -22,10 +22,11 @@ export const resultTransfer = async (req: Request, res: Response): Promise<Respo
 			'users.email',
 			'users.noc_transfer',
 			knex.raw('SUM(transfer.transfer_amount) as total_transfer_amount'),
+			'transfer.transfer_from',
 			'transfer.transfer_to'
 		])
 		.where({ 'users.user_id': req.params.id })
-		.groupBy(['users.user_id', 'users.email', 'users.noc_transfer', 'transfer.transfer_to'])
+		.groupBy(['users.user_id', 'users.email', 'users.noc_transfer', 'transfer.transfer_from', 'transfer.transfer_to'])
 		.orderBy('users.user_id', 'asc')
 
 	const findUser: UsersDTO[] = await knex<UsersDTO>('users').select('email').where({ user_id: req.params.id })
@@ -43,19 +44,19 @@ export const resultTransfer = async (req: Request, res: Response): Promise<Respo
 			const findSaldoTo: IFindTransferTo[] = await knex<TransferDTO, UsersDTO>('transfer')
 				.join('users', 'users.user_id', 'transfer.transfer_to')
 				.select([
-					'users.user_id',
+					'transfer.transfer_to',
+					'transfer.transfer_id',
 					'users.email',
 					'users.noc_transfer',
-					'transfer.transfer_id',
-					'transfer.transfer_amount',
+					'transfer_amount',
 					'transfer.transfer_time'
 				])
-				.where({ 'transfer.transfer_to': val.transfer_to })
+				.andWhere({ 'transfer.transfer_to': val.transfer_to, 'transfer.transfer_from': val.transfer_from })
 				.groupBy([
-					'users.user_id',
+					'transfer.transfer_to',
+					'transfer.transfer_id',
 					'users.email',
 					'users.noc_transfer',
-					'transfer.transfer_id',
 					'transfer.transfer_amount',
 					'transfer.transfer_time'
 				])

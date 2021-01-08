@@ -10,6 +10,7 @@ export interface IFindTransferFrom {
 	readonly noc_transfer: number
 	readonly total_transfer_amount: number
 	readonly transfer_to: number
+	readonly transfer_from: number
 }
 
 export interface IFindParamsTransferFrom {
@@ -51,17 +52,18 @@ export interface IFindTransferTo {
 	readonly email: string
 	readonly noc_transfer: number
 	readonly transfer_id: number
+	readonly transfer_to: number
+	readonly transfer_from: number
 	readonly transfer_amount: number
 	readonly transfer_time: any
 }
 
 export interface IFindParamsTransferTo {
-	readonly user_id: number
 	readonly transfer_to: number
+	readonly transfer_from: number
 }
 
 export interface IFindNewParamsTransferTo {
-	readonly user_id: number
 	readonly email: string
 	readonly noc_transfer: number
 	readonly transfer_id: number
