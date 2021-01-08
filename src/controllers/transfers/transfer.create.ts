@@ -49,7 +49,7 @@ export const createTransfer = async (req: Request, res: Response): Promise<Respo
 			transfer_time: dateFormat(new Date()),
 			created_at: new Date()
 		})
-		.returning(['transfer_amount'])
+		.returning('*')
 
 	if (Object.keys(saveTransfer).length < 1) {
 		return res.status(408).json({

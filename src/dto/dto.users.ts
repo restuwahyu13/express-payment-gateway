@@ -18,6 +18,7 @@ export class UsersDTO implements IUsers {
 	readonly photo?: string
 	readonly active?: boolean
 	readonly noc_transfer?: number
+	readonly role?: string
 	readonly first_login?: any
 	readonly last_login?: any
 	readonly created_at?: Date

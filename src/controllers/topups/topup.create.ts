@@ -6,6 +6,7 @@ import { expressValidator } from '../../utils/util.validator'
 import { uniqueOrderNumber } from '../../utils/util.uuid'
 import { tempMailTopup } from '../../templates/template.topup'
 import { dateFormat } from '../../utils/util.date'
+import { paymentMethodValidator } from '../../utils/util.paymentMethod'
 import { TopupsDTO } from '../../dto/dto.topups'
 import { SaldoDTO } from '../../dto/dto.saldo'
 import { LogsDTO } from '../../dto/dto.logs'
@@ -32,13 +33,21 @@ export const createTopup = async (req: Request, res: Response): Promise<Response
 		})
 	}
 
+	if (!paymentMethodValidator(req.body.topup_method)) {
+		return res.status(403).json({
+			status: res.statusCode,
+			method: req.method,
+			message: 'payment method is not support, please try again'
+		})
+	}
+
 	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ user_id: req.body.user_id })
 
 	if (findUser.length < 1) {
 		return res.status(400).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'user id is not exist, top up balance failed'
+			message: 'user id is not exist, topup balance failed'
 		})
 	}
 
@@ -127,6 +136,6 @@ export const createTopup = async (req: Request, res: Response): Promise<Response
 	return res.status(201).json({
 		status: res.statusCode,
 		method: req.method,
-		message: `top up balance successfully, please check your email ${findUser[0].email}`
+		message: `topup balance successfully, please check your email ${findUser[0].email}`
 	})
 }
