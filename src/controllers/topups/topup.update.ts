@@ -17,26 +17,26 @@ export const updateTopup = async (req: Request, res: Response): Promise<Response
 
 	const { user_id, topup_no, topup_amount, topup_method }: TopupsDTO = req.body
 
-	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ user_id: user_id }).select()
-	const findTopup: TopupsDTO[] = await knex<TopupsDTO>('topups').where({ topup_id: req.params.id }).select('topup_id')
-
-	if (findUser.length < 1) {
-		return res.status(404).json({
+	if (topup_amount <= 49000) {
+		return res.status(403).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'user id is not exist, cannot update data topup'
+			message: 'mininum topup balance Rp 50.000'
 		})
 	}
 
-	if (findTopup.length < 1) {
+	const checkUserId: UsersDTO[] = await knex<UsersDTO>('users').where({ user_id: user_id }).select('*')
+	const checkTopupId: TopupsDTO[] = await knex<TopupsDTO>('topups').where({ topup_id: req.params.id }).select('*')
+
+	if (checkUserId.length < 1 || checkTopupId.length < 1) {
 		return res.status(404).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'topup id is not exist, cannot update data topup'
+			message: 'user id or topup id is not exist, update data topup failed'
 		})
 	}
 
-	const updateTopup: number = await knex<TopupsDTO>('knex').where({ topup_id: findTopup[0].topup_id }).update({
+	const updateTopup: number = await knex<TopupsDTO>('topups').where({ topup_id: checkTopupId[0].topup_id }).update({
 		user_id: user_id,
 		topup_no: topup_no,
 		topup_amount: topup_amount,
@@ -44,10 +44,10 @@ export const updateTopup = async (req: Request, res: Response): Promise<Response
 	})
 
 	if (updateTopup < 1) {
-		return res.status(400).json({
+		return res.status(408).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'update data topup failed, please try again'
+			message: 'update data topup failed, server is busy'
 		})
 	}
 

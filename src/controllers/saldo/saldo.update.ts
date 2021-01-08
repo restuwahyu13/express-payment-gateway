@@ -2,8 +2,7 @@ import { Request, Response } from 'express'
 import knex from '../../database'
 import { expressValidator } from '../../utils/util.validator'
 import { SaldoDTO } from '../../dto/dto.saldo'
-import { SaldoHistoryDTO } from '../../dto/dto.saldoHistory'
-import { TopupsDTO } from '../../dto/dto.topups'
+import { UsersDTO } from '../../dto/dto.users'
 
 export const updateSaldo = async (req: Request, res: Response): Promise<Response<any>> => {
 	const errors = expressValidator(req)
@@ -16,30 +15,30 @@ export const updateSaldo = async (req: Request, res: Response): Promise<Response
 		})
 	}
 
-	const { topup_id, balance }: SaldoHistoryDTO = req.body
+	const { user_id, total_balance }: SaldoDTO = req.body
 
-	const findTopup: TopupsDTO[] = await knex<TopupsDTO>('topups').where({ topup_id: topup_id }).select('topup_id')
-	const findSaldo: SaldoDTO[] = await knex<SaldoDTO>('saldo').where({ saldo_id: req.params.id }).select('saldo_id')
-
-	if (findTopup.length < 1) {
-		return res.status(404).json({
+	if (total_balance <= 49000) {
+		return res.status(403).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'topup id is not exist, update data saldo failed'
+			message: 'mininum balance Rp 50.000'
 		})
 	}
 
-	if (findSaldo.length < 1) {
+	const checkUserId: UsersDTO[] = await knex<UsersDTO>('users').where({ user_id: user_id }).select('*')
+	const checkSaldoId: SaldoDTO[] = await knex<SaldoDTO>('saldo').where({ saldo_id: req.params.id }).select('*')
+
+	if (checkUserId.length < 1 || checkSaldoId.length < 1) {
 		return res.status(404).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'saldo id is not exist, update data saldo failed'
+			message: 'user id or saldo id is not exist, update data saldo failed'
 		})
 	}
 
-	const updateSaldo: number = await knex<TopupsDTO>('knex').where({ saldo_id: findSaldo[0].saldo_id }).update({
-		topup_id: topup_id,
-		balance: balance,
+	const updateSaldo: number = await knex<SaldoDTO>('saldo').where({ saldo_id: checkSaldoId[0].saldo_id }).update({
+		user_id: user_id,
+		total_balance: total_balance,
 		updated_at: new Date()
 	})
 

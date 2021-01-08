@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import knex from '../../database'
 import { expressValidator } from '../../utils/util.validator'
 import { SaldoDTO } from '../../dto/dto.saldo'
+import { UsersDTO } from '../../dto/dto.users'
 
 export const deleteSaldo = async (req: Request, res: Response): Promise<Response<any>> => {
 	const errors = expressValidator(req)
@@ -14,17 +15,18 @@ export const deleteSaldo = async (req: Request, res: Response): Promise<Response
 		})
 	}
 
-	const findSaldo: SaldoDTO[] = await knex<SaldoDTO>('saldo').where({ saldo_id: req.params.id }).select('saldo_id')
+	const checkUserId: UsersDTO[] = await knex<UsersDTO>('users').where({ user_id: req.params.id }).select('*')
+	const checkSaldoId: SaldoDTO[] = await knex<SaldoDTO>('saldo').where({ saldo_id: req.params.id }).select('*')
 
-	if (findSaldo.length < 1) {
+	if (checkUserId.length < 1 || checkSaldoId.length < 1) {
 		return res.status(404).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'saldo id is not exist, failed to deleted data saldo'
+			message: 'user id or saldo id is not exist, delete data saldo failed'
 		})
 	}
 
-	const deleteSaldo: number = await knex<SaldoDTO>('saldo').where({ saldo_id: findSaldo[0].saldo_id }).delete()
+	const deleteSaldo: number = await knex<SaldoDTO>('saldo').where({ saldo_id: checkSaldoId[0].saldo_id }).delete()
 
 	if (deleteSaldo < 1) {
 		return res.status(408).json({

@@ -14,23 +14,23 @@ export const deleteTopup = async (req: Request, res: Response): Promise<Response
 		})
 	}
 
-	const findTopup: TopupsDTO[] = await knex<TopupsDTO>('topups').where({ topup_id: req.params.id }).select('topup_id')
+	const checkTopupId: TopupsDTO[] = await knex<TopupsDTO>('topups').where({ topup_id: req.params.id }).select('*')
 
-	if (findTopup.length < 1) {
+	if (checkTopupId.length < 1) {
 		return res.status(404).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'topup id is not exist, cannot delete data topup'
+			message: 'topup id is not exist, delete data topup failed'
 		})
 	}
 
-	const deleteTopup: number = await knex<TopupsDTO>('knex').where({ topup_id: findTopup[0].topup_id }).delete()
+	const deleteTopup: number = await knex<TopupsDTO>('topups').where({ topup_id: checkTopupId[0].topup_id }).delete()
 
 	if (deleteTopup < 1) {
-		return res.status(400).json({
+		return res.status(408).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'delete data topup failed, please try again'
+			message: 'delete data topup failed, server is busy'
 		})
 	}
 

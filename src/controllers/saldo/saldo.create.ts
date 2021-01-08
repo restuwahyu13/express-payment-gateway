@@ -15,36 +15,48 @@ export const createSaldo = async (req: Request, res: Response): Promise<Response
 		})
 	}
 
-	const { user_id, total_balance }: SaldoDTO = req.body
-	const checkTopupId: UsersDTO[] = await knex<UsersDTO>('users').where({ user_id: user_id }).select('*')
+	if (req.body.total_balance <= 49000) {
+		return res.status(403).json({
+			status: res.statusCode,
+			method: req.method,
+			message: 'mininum saldo Rp 50.000'
+		})
+	}
 
-	if (checkTopupId.length < 1) {
+	const checkUserId: UsersDTO[] = await knex<UsersDTO>('users').where({ user_id: req.body.user_id }).select('*')
+	const checkSaldoUserId: SaldoDTO[] = await knex<SaldoDTO>('saldo').where({ user_id: req.body.user_id }).select('*')
+
+	if (checkUserId.length < 1) {
 		return res.status(404).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'topup id is not exist, in the system'
+			message: 'user id is not exist, add saldo failed'
+		})
+	}
+
+	if (checkSaldoUserId.length > 0) {
+		return res.status(409).json({
+			status: res.statusCode,
+			method: req.method,
+			message: 'saldo user id already exist, add saldo failed'
 		})
 	}
 
 	const saveSaldo = await knex<SaldoDTO>('saldo')
-		.insert({
-			topup_id: user_id,
-			balance: total_balance,
-			created_at: new Date()
-		})
+		.insert({ user_id: checkUserId[0].user_id, total_balance: req.body.total_balance, created_at: new Date() })
 		.returning('*')
 
 	if (Object.keys(saveSaldo[0]).length < 1) {
 		return res.status(408).json({
 			status: res.statusCode,
 			method: req.method,
-			message: 'top up balance failed, server is busy'
+			message: 'add saldo failed, server is busy'
 		})
 	}
 
 	return res.status(200).json({
 		status: res.statusCode,
 		method: req.method,
-		message: 'top up balance successfully'
+		message: 'add saldo successfully'
 	})
 }

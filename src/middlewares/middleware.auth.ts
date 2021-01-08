@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 import { Base64 } from 'js-base64'
 import { message } from '../utils/util.message'
 
-export const authJwt = () => (req: Request, res: Response, next: NextFunction): void | Response<any> => {
+export const authJwt = () => (req: Request | any, res: Response, next: NextFunction): void | Response<any> => {
 	const tokenHeader: string = req.headers.authorization.split('Bearer ')[1]
 	if (tokenHeader) {
 		try {
