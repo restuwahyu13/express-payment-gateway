@@ -4,6 +4,7 @@ import { TransferDTO } from '../../dto/dto.transfer'
 import { UsersDTO } from '../../dto/dto.users'
 import { dateFormat } from './../../utils/util.date'
 import { rupiahFormatter } from './../../utils/util.rupiah'
+import { expressValidator } from '../../utils/util.validator'
 import {
 	IFindTransferFrom,
 	IFindNewTransferFrom,
@@ -15,6 +16,16 @@ import {
 } from '../../interface/i.transfer'
 
 export const resultTransfer = async (req: Request, res: Response): Promise<Response<any>> => {
+	const errors = expressValidator(req)
+
+	if (errors.length > 0) {
+		return res.status(400).json({
+			status: res.statusCode,
+			method: req.method,
+			errors
+		})
+	}
+
 	const findTransferSaldoFrom: IFindTransferFrom[] = await knex<TransferDTO, UsersDTO>('transfer')
 		.join('users', 'users.user_id', 'transfer.transfer_from')
 		.select([

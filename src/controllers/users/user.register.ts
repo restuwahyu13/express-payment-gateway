@@ -9,9 +9,20 @@ import { tempMailRegister } from '../../templates/template.register'
 import { randomVCC } from '../../utils/util.randomVcc'
 import { IRegisterMail } from '../../interface/i.tempmail'
 import { IJwt } from '../../interface/i.jwt'
+import { expressValidator } from '../../utils/util.validator'
 sgMail.setApiKey(process.env.SG_SECRET)
 
 export const register = async (req: Request, res: Response): Promise<Response<any>> => {
+	const errors = expressValidator(req)
+
+	if (errors.length > 0) {
+		return res.status(400).json({
+			status: res.statusCode,
+			method: req.method,
+			errors
+		})
+	}
+
 	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: req.body.email }).select('*')
 	if (findUser.length > 0) {
 		return res.status(409).json({

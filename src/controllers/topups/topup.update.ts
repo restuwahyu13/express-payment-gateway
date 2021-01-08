@@ -1,9 +1,20 @@
 import { Request, Response } from 'express'
 import knex from '../../database'
+import { expressValidator } from '../../utils/util.validator'
 import { TopupsDTO } from '../../dto/dto.topups'
 import { UsersDTO } from '../../dto/dto.users'
 
 export const updateTopup = async (req: Request, res: Response): Promise<Response<any>> => {
+	const errors = expressValidator(req)
+
+	if (errors.length > 0) {
+		return res.status(400).json({
+			status: res.statusCode,
+			method: req.method,
+			errors
+		})
+	}
+
 	const { user_id, topup_no, topup_amount, topup_method }: TopupsDTO = req.body
 
 	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ user_id: user_id }).select()

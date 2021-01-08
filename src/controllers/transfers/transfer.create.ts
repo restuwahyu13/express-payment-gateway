@@ -7,11 +7,22 @@ import { UsersDTO } from '../../dto/dto.users'
 import { SaldoDTO } from '../../dto/dto.saldo'
 import { LogsDTO } from '../../dto/dto.logs'
 import { dateFormat } from '../../utils/util.date'
+import { expressValidator } from '../../utils/util.validator'
 import { rupiahFormatter } from '../../utils/util.rupiah'
 import { tempMailTransfer } from '../../templates/template.transfer'
 import { ITransferMail } from '../../interface/i.tempmail'
 
 export const createTransfer = async (req: Request, res: Response): Promise<Response<any>> => {
+	const errors = expressValidator(req)
+
+	if (errors.length > 0) {
+		return res.status(400).json({
+			status: res.statusCode,
+			method: req.method,
+			errors
+		})
+	}
+
 	const { transfer_from, transfer_to, transfer_amount }: TransferDTO = req.body
 
 	const checkUserIdFrom: UsersDTO[] = await knex<UsersDTO>('users')

@@ -8,10 +8,21 @@ import { LogsDTO } from './../../dto/dto.logs'
 import { UsersDTO } from './../../dto/dto.users'
 import { dateFormat } from './../../utils/util.date'
 import { rupiahFormatter } from './../../utils/util.rupiah'
+import { expressValidator } from '../../utils/util.validator'
 import { tempMailWithdraw } from './../../templates/template.withdraw'
 import { IWithdrawMail } from '../../interface/i.tempmail'
 
 export const createWithdraw = async (req: Request, res: Response): Promise<Response<any>> => {
+	const errors = expressValidator(req)
+
+	if (errors.length > 0) {
+		return res.status(400).json({
+			status: res.statusCode,
+			method: req.method,
+			errors
+		})
+	}
+
 	if (req.body.withdraw_amount <= 49000) {
 		return res.status(403).json({
 			status: res.statusCode,

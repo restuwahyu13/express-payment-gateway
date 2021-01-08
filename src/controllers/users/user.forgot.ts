@@ -2,14 +2,25 @@ import { Request, Response } from 'express'
 import knex from '../../database'
 import sgMail from '@sendgrid/mail'
 import { ClientResponse } from '@sendgrid/client/src/response'
-import { UsersDTO } from '../../dto/dto.users'
 import { tempMailReset } from '../../templates/template.reset'
 import { signAccessToken } from '../../utils/util.jwt'
+import { expressValidator } from '../../utils/util.validator'
+import { UsersDTO } from '../../dto/dto.users'
 import { IResetMail } from '../../interface/i.tempmail'
 import { IJwt } from '../../interface/i.jwt'
 sgMail.setApiKey(process.env.SG_SECRET)
 
 export const forgot = async (req: Request, res: Response): Promise<Response<any>> => {
+	const errors = expressValidator(req)
+
+	if (errors.length > 0) {
+		return res.status(400).json({
+			status: res.statusCode,
+			method: req.method,
+			errors
+		})
+	}
+
 	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: req.body.email }).select()
 
 	if (findUser.length < 1) {

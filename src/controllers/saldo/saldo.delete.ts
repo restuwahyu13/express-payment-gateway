@@ -1,8 +1,19 @@
 import { Request, Response } from 'express'
 import knex from '../../database'
+import { expressValidator } from '../../utils/util.validator'
 import { SaldoDTO } from '../../dto/dto.saldo'
 
 export const deleteSaldo = async (req: Request, res: Response): Promise<Response<any>> => {
+	const errors = expressValidator(req)
+
+	if (errors.length > 0) {
+		return res.status(400).json({
+			status: res.statusCode,
+			method: req.method,
+			errors
+		})
+	}
+
 	const findSaldo: SaldoDTO[] = await knex<SaldoDTO>('saldo').where({ saldo_id: req.params.id }).select('saldo_id')
 
 	if (findSaldo.length < 1) {

@@ -1,9 +1,20 @@
 import { Request, Response } from 'express'
 import knex from '../../database'
+import { expressValidator } from '../../utils/util.validator'
 import { SaldoDTO } from '../../dto/dto.saldo'
 import { UsersDTO } from '../../dto/dto.users'
 
 export const createSaldo = async (req: Request, res: Response): Promise<Response<any>> => {
+	const errors = expressValidator(req)
+
+	if (errors.length > 0) {
+		return res.status(400).json({
+			status: res.statusCode,
+			method: req.method,
+			errors
+		})
+	}
+
 	const { user_id, total_balance }: SaldoDTO = req.body
 	const checkTopupId: UsersDTO[] = await knex<UsersDTO>('users').where({ user_id: user_id }).select('*')
 

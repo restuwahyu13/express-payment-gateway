@@ -1,14 +1,25 @@
 import { Request, Response } from 'express'
 import knex from '../../database'
+import { expressValidator } from '../../utils/util.validator'
+import { rupiahFormatter } from '../../utils/util.rupiah'
+import { dateFormat } from '../../utils/util.date'
 import { SaldoHistoryDTO } from '../../dto/dto.saldoHistory'
 import { TopupsDTO } from '../../dto/dto.topups'
 import { SaldoDTO } from '../../dto/dto.saldo'
 import { UsersDTO } from '../../dto/dto.users'
-import { rupiahFormatter } from '../../utils/util.rupiah'
-import { dateFormat } from '../../utils/util.date'
 import { IFindBalance, IFindParamsBalance, IFindNewBalance } from '../../interface/i.saldo'
 
 export const resultSaldo = async (req: Request, res: Response): Promise<Response<any>> => {
+	const errors = expressValidator(req)
+
+	if (errors.length > 0) {
+		return res.status(400).json({
+			status: res.statusCode,
+			method: req.method,
+			errors
+		})
+	}
+
 	// const findBalanceHistory: IFindBalanceHistory[] = await knex<SaldoHistoryDTO, TopupsDTO>('saldo_history')
 	// 	.join('topups', 'topups.topup_id', 'saldo_history.topup_id')
 	// 	.select(['topups.user_id', 'topups.topup_method', 'saldo_history.balance', 'saldo_history.created_at'])

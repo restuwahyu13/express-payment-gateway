@@ -7,9 +7,20 @@ import { tempMailResend } from '../../templates/template.resend'
 import { signAccessToken } from '../../utils/util.jwt'
 import { IResendMail } from '../../interface/i.tempmail'
 import { IJwt } from '../../interface/i.jwt'
+import { expressValidator } from '../../utils/util.validator'
 sgMail.setApiKey(process.env.SG_SECRET)
 
 export const resend = async (req: Request, res: Response): Promise<Response<any>> => {
+	const errors = expressValidator(req)
+
+	if (errors.length > 0) {
+		return res.status(400).json({
+			status: res.statusCode,
+			method: req.method,
+			errors
+		})
+	}
+
 	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: req.body.email }).select()
 
 	if (findUser.length < 1) {

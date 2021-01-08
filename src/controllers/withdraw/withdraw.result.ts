@@ -4,6 +4,7 @@ import { UsersDTO } from '../../dto/dto.users'
 import { WithdrawDTO } from '../../dto/dto.withdraw'
 import { rupiahFormatter } from '../../utils/util.rupiah'
 import { dateFormat } from '../../utils/util.date'
+import { expressValidator } from '../../utils/util.validator'
 import {
 	IFindParamsWithdrawAmount,
 	IFindWithdrawAmount,
@@ -15,6 +16,16 @@ import {
 } from '../../interface/i.withdraw'
 
 export const resultWithdraw = async (req: Request, res: Response): Promise<Response<any>> => {
+	const errors = expressValidator(req)
+
+	if (errors.length > 0) {
+		return res.status(400).json({
+			status: res.statusCode,
+			method: req.method,
+			errors
+		})
+	}
+
 	const findWithdrawAmount: IFindWithdrawAmount[] = await knex<WithdrawDTO, UsersDTO>('withdraw')
 		.join('users', 'users.user_id', 'withdraw.user_id')
 		.select([

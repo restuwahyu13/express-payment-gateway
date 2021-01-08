@@ -4,6 +4,7 @@ import { TopupsDTO } from '../../dto/dto.topups'
 import { UsersDTO } from '../../dto/dto.users'
 import { dateFormat } from '../../utils/util.date'
 import { rupiahFormatter } from '../../utils/util.rupiah'
+import { expressValidator } from '../../utils/util.validator'
 import {
 	IFindTopup,
 	IFindNewTopup,
@@ -14,6 +15,16 @@ import {
 } from '../../interface/i.topup'
 
 export const resultTopup = async (req: Request, res: Response): Promise<Response<any>> => {
+	const errors = expressValidator(req)
+
+	if (errors.length > 0) {
+		return res.status(400).json({
+			status: res.statusCode,
+			method: req.method,
+			errors
+		})
+	}
+
 	const findTopupAmount: IFindTopup[] = await knex<UsersDTO, UsersDTO>('topups')
 		.join('users', 'users.user_id', 'topups.user_id')
 		.select([

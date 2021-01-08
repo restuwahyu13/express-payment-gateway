@@ -2,10 +2,21 @@ import { Request, Response } from 'express'
 import knex from '../../database'
 import { UsersDTO } from '../../dto/dto.users'
 import { verifySignAccessToken } from '../../utils/util.jwt'
+import { expressValidator } from '../../utils/util.validator'
 import { hashPassword as encodePassword } from '../../utils/util.encrypt'
 
 export const reset = async (req: Request, res: Response): Promise<Response<any>> => {
 	try {
+		const errors = expressValidator(req)
+
+		if (errors.length > 0) {
+			return res.status(400).json({
+				status: res.statusCode,
+				method: req.method,
+				errors
+			})
+		}
+
 		const { email }: UsersDTO = verifySignAccessToken()(req, res, req.params.token)
 		const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: email }).select('password')
 

@@ -5,8 +5,19 @@ import { LogsDTO } from '../../dto/dto.logs'
 import { signAccessToken } from '../../utils/util.jwt'
 import { verifyPassword } from '../../utils/util.encrypt'
 import { dateFormat } from '../../utils/util.date'
+import { expressValidator } from '../../utils/util.validator'
 
 export const login = async (req: Request, res: Response): Promise<Response<any>> => {
+	const errors = expressValidator(req)
+
+	if (errors.length > 0) {
+		return res.status(400).json({
+			status: res.statusCode,
+			method: req.method,
+			errors
+		})
+	}
+
 	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: req.body.email }).select()
 
 	if (findUser.length < 1) {

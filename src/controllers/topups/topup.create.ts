@@ -2,17 +2,28 @@ import { Request, Response } from 'express'
 import sgMail from '@sendgrid/mail'
 import { ClientResponse } from '@sendgrid/client/src/response'
 import knex from '../../database'
+import { expressValidator } from '../../utils/util.validator'
+import { uniqueOrderNumber } from '../../utils/util.uuid'
+import { tempMailTopup } from '../../templates/template.topup'
+import { dateFormat } from '../../utils/util.date'
 import { TopupsDTO } from '../../dto/dto.topups'
 import { SaldoDTO } from '../../dto/dto.saldo'
 import { LogsDTO } from '../../dto/dto.logs'
 import { UsersDTO } from '../../dto/dto.users'
 import { TransferDTO } from '../../dto/dto.transfer'
-import { uniqueOrderNumber } from '../../utils/util.uuid'
-import { tempMailTopup } from '../../templates/template.topup'
-import { dateFormat } from '../../utils/util.date'
 import { ITopupMail } from '../../interface/i.tempmail'
 
 export const createTopup = async (req: Request, res: Response): Promise<Response<any>> => {
+	const errors = expressValidator(req)
+
+	if (errors.length > 0) {
+		return res.status(400).json({
+			status: res.statusCode,
+			method: req.method,
+			errors
+		})
+	}
+
 	if (req.body.topup_amount <= 49000) {
 		return res.status(403).json({
 			status: res.statusCode,
