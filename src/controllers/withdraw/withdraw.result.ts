@@ -38,13 +38,13 @@ export const resultWithdraw = async (req: Request, res: Response): Promise<Respo
 		.groupBy(['users.user_id', 'users.email', 'users.noc_transfer'])
 		.orderBy('users.user_id', 'asc')
 
-	const findUser: UsersDTO[] = await knex<UsersDTO>('users').select('email').where({ user_id: req.params.id })
+	const checkUserId: UsersDTO[] = await knex<UsersDTO>('users').select('email').where({ user_id: req.params.id })
 
-	if (findWithdrawAmount.length < 1 && findUser.length > 0) {
+	if (findWithdrawAmount.length < 1 && checkUserId.length > 0) {
 		return res.status(200).json({
 			status: res.statusCode,
 			method: req.method,
-			message: `${findUser[0].email} you never withdraw money`
+			message: `${checkUserId[0].email} you never withdraw money`
 		})
 	}
 

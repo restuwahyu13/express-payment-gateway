@@ -18,21 +18,11 @@ export interface IFindParamsBalance {
 	readonly saldo_created: any
 }
 
-// type FindSubBalance = {
-// 	readonly user_id: number
-// 	readonly saldoTopup: string
-// 	readonly nominal_topup: string | number
-// 	readonly tanggal_topup: any
-// }
-
 type FindNewBalance = {
 	readonly user_id: number
 	readonly email: string
 	readonly kode_transfer: number
 	readonly jumlah_uang: string
-	readonly jumlah_penarikan: string
-	readonly waktu_penarikan: any
-	// readonly topup_history: FindSubBalance
 }
 
 export interface IFindNewBalance {

@@ -40,13 +40,13 @@ export const resultTransfer = async (req: Request, res: Response): Promise<Respo
 		.groupBy(['users.user_id', 'users.email', 'users.noc_transfer', 'transfer.transfer_from', 'transfer.transfer_to'])
 		.orderBy('users.user_id', 'asc')
 
-	const findUser: UsersDTO[] = await knex<UsersDTO>('users').select('email').where({ user_id: req.params.id })
+	const checkUserId: UsersDTO[] = await knex<UsersDTO>('users').select('email').where({ user_id: req.params.id })
 
-	if (findTransferSaldoFrom.length < 1 && findUser.length > 0) {
+	if (findTransferSaldoFrom.length < 1 && checkUserId.length > 0) {
 		return res.status(200).json({
 			status: res.statusCode,
 			method: req.method,
-			message: `${findUser[0].email} you never transfer money to other people`
+			message: `${checkUserId[0].email} you never transfer money to other people`
 		})
 	}
 
