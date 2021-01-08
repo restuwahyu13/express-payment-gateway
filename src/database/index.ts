@@ -1,5 +1,5 @@
 import knexFile from '../../knexfile'
 import knex from 'knex'
-const { development } = require('../../knexfile')
+import knexConfig from './../../knexfile'
 
-export default knex(knexFile.development)
+export default knex(knexConfig.development)

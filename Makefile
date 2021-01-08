@@ -1,3 +1,20 @@
+####################################
+### DOCKER BUILD
+####################################
+
+DOCKER := docker
+
+d-bd:
+ifdef v
+	${DOCKER} build -f Dockerfile.dev -t express/payment-gateway:${v} .
+endif
+
+d-bp:
+ifdef v
+	${DOCKER} build -f Dockerfile.prod -t express/payment-gateway:${v} .
+endif
+
+
 #################################
 ### APPLICATION BUILD AND DEV
 #################################
@@ -24,22 +41,6 @@ lfx:
 	${NPM} run lint:fix
 
 ###############################
-### SIMPLE GIT AUTOMATION
-###############################
-
-GIT := git
-ACTION_GITHUB = add.o commit.o push.o
-
-gh: ${ACTION_GITHUB}
-
-%.o:
-	${GIT} add .
-ifdef msg
-	${GIT} commit -m "${msg}"
-endif
-	${GIT} push origin master
-
-###############################
 ### KNEX MIGRATION
 ###############################
 
@@ -50,3 +51,45 @@ latest: #knex migrate latest database
 
 rollback: #knex migrate rollback database
 	${KNEX} migrate:rollback
+
+###############################
+###  GIT AUTOMATION
+###############################
+
+GIT := git
+
+gh: add.o commit.o push.o
+
+add.o:
+	${GIT} add .
+
+commit.o:
+
+ifdef msg
+	${GIT} commit -m "${msg}"
+endif
+
+push.o:
+	${GIT} push origin master
+
+####################################
+###  APPLICATION BUILD AUTOMATION
+####################################
+
+build: lfx.b compiler.b
+
+lfx.b:
+	${NPM} run lint:fix
+compiler.b:
+	${NPM} run build
+
+####################################
+### INSTALL GLOBAL AUTOMATION
+####################################
+
+install: npm.i  knex.i
+
+npm.i:
+	${NPM} install
+knex.i:
+	${NPM} install knex -g
