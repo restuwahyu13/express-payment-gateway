@@ -9,7 +9,10 @@
 		"compiler:watch": "tsc --watch && node/dist/server.js",
 		"build": "npm run cleanup && npm run compiler",
 		"start": "node dist/server.js",
-		"dev": "nodemon -w *.ts -e ts -x ts-node --files -H -T server.ts"
+		"dev": "nodemon -w *.ts -e ts -x ts-node --files -H -T server.ts",
+		"lint": "eslint src/**/*.ts --fix",
+		"format": "prettier src/**/*.ts --write",
+		"lint:fix": "npm run format && npm run lint"
 	},
 	"repository": {
 		"type": "git",
@@ -85,5 +88,10 @@
 		"rimraf": "^3.0.2",
 		"ts-node": "^9.1.1",
 		"typescript": "^4.1.3"
+	},
+	"husky": {
+		"hooks": {
+			"pre-commit": "npm run lint:fix"
+		}
 	}
 }

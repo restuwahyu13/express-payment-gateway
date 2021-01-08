@@ -9,7 +9,7 @@ export const authJwt = () => (req: Request, res: Response, next: NextFunction): 
 		try {
 			const decodedToken: string = Base64.decode(tokenHeader)
 			const { user_id, email }: string | any = jwt.verify(decodedToken, process.env.ACCESS_TOKEN_SECRET)
-			req['user'] = { user_id: user_id, email: email }
+			req.user = { user_id: user_id, email: email }
 			next()
 		} catch (err) {
 			message({

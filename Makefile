@@ -10,6 +10,19 @@ dev: #application with env development
 prod: #application with env production
 	${NPM} run build
 
+####################################
+###  ESLINT AND PRETTIER FORMATTER
+####################################
+
+fix:
+	${NPM} run lint
+
+format:
+	${NPM} run format
+
+lfx:
+	${NPM} run lint:fix
+
 ###############################
 ### SIMPLE GIT AUTOMATION
 ###############################
