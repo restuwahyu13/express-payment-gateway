@@ -71,3 +71,14 @@ export const withdrawValidator = (): ValidationChain[] => [
 	check('withdraw_amount').notEmpty().withMessage('withdraw_amount is required'),
 	check('withdraw_amount').isNumeric().withMessage('withdraw_amount must be a number')
 ]
+
+export const adminValidator = (): ValidationChain[] => [
+	check('email').notEmpty().withMessage('email is required'),
+	check('email').isEmail().withMessage('email is not valid'),
+	check('password').notEmpty().withMessage('password is required'),
+	check('password').isLength({ min: 8 }).withMessage('password must be at least 8 characters'),
+	check('active').notEmpty().withMessage('active is required'),
+	check('active').isBoolean().withMessage('active must be a boolean'),
+	check('role').notEmpty().withMessage('role is required'),
+	check('role').isString().withMessage('role must be a string')
+]

@@ -1,0 +1,699 @@
+{
+	"info": {
+		"_postman_id": "2451f49b-685c-41dc-aacf-a323f020e2ba",
+		"name": "tonase_task",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "admins",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"restuwahyu13@zetmail.com\",\r\n  \"password\": \"restuwahyu13\",\r\n  \"active\": 12,\r\n  \"role\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{tonase_task}}/admin",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "results",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{tonase_task}}/admin",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "result",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{tonase_task}}/2",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{tonase_task}}/admin/1",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"admin",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n \"email\": \"restuwahyu13@zetmail.com\",\r\n \"password\": \"bukopin12\",\r\n \"active\": true,\r\n \"role\": \"admin\"\r\n}"
+						},
+						"url": {
+							"raw": "{{tonase_task}}/admin/1",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"admin",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "users",
+			"item": [
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"restuwahyu13@zetmail.com\",\r\n    \"password\": \"restuwahyu13\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{tonase_task}}/user/register",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"user",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\": \"aldikhan13@zetmail.com\",\r\n    \"password\": \"aldikhan13\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{tonase_task}}/user/login",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "activation",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{tonase_task}}/user/activation/ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SjFjMlZ5WDJsa0lqb3lMQ0psYldGcGJDSTZJbkpsYzNSMWQyRm9lWFV4TTBCNlpYUnRZV2xzTG1OdmJTSXNJbWxoZENJNk1UWXdPVFU0TmpnMU55d2laWGh3SWpveE5qQTVOVGczTVRVM2ZRLk41T05YM1ZDVXc5VEpaRXpSc0dyVlpCZVJWZ2tyb2NwaTAwRldlNTU3bDA=",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"user",
+								"activation",
+								"ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SjFjMlZ5WDJsa0lqb3lMQ0psYldGcGJDSTZJbkpsYzNSMWQyRm9lWFV4TTBCNlpYUnRZV2xzTG1OdmJTSXNJbWxoZENJNk1UWXdPVFU0TmpnMU55d2laWGh3SWpveE5qQTVOVGczTVRVM2ZRLk41T05YM1ZDVXc5VEpaRXpSc0dyVlpCZVJWZ2tyb2NwaTAwRldlNTU3bDA="
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "resend",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"restuwahyu13@zetmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{tonase_task}}/user/resend-activation",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"user",
+								"resend-activation"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "forgot",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"email\": \"restuwahyu13@zetmail.com\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{tonase_task}}/user/forgot-password",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"user",
+								"forgot-password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reset",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"password\": \"bejo123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{tonase_task}}/user/reset-password/ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SjFjMlZ5WDJsa0lqbzVMQ0psYldGcGJDSTZJbkpsYzNSMWQyRm9lWFV4TTBCNlpYUnRZV2xzTG1OdmJTSXNJbWxoZENJNk1UWXdPVFV3T1RnME9Td2laWGh3SWpveE5qQTVOVGsyTWpRNWZRLlRsb05BTEREU0h6bFJZZ2VnTUM5RlpEOFZlYjI3TmlJXzExamtWX0I5Wjg=",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"user",
+								"reset-password",
+								"ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SjFjMlZ5WDJsa0lqbzVMQ0psYldGcGJDSTZJbkpsYzNSMWQyRm9lWFV4TTBCNlpYUnRZV2xzTG1OdmJTSXNJbWxoZENJNk1UWXdPVFV3T1RnME9Td2laWGh3SWpveE5qQTVOVGsyTWpRNWZRLlRsb05BTEREU0h6bFJZZ2VnTUM5RlpEOFZlYjI3TmlJXzExamtWX0I5Wjg="
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "topups",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"user_id\": 3,\r\n\"topup_amount\": 100000,\r\n\"topup_method\": \"alfamart\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{tonase_task}}/topup",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"topup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "results",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SjFjMlZ5WDJsa0lqb3pMQ0psYldGcGJDSTZJbUZzWkdscmFHRnVNVE5BZW1WMGJXRnBiQzVqYjIwaUxDSnBZWFFpT2pFMk1UQXhNVEl3T1RZc0ltVjRjQ0k2TVRZeE1ERTVPRFE1Tm4wLmliWmRqVmFWVldpRjl5MEQ4Vl9YcExnZlhWU1cyTVdfU3pEMm5mcVMyRUU=",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{tonase_task}}/topup",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"topup"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "result",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SmxiV0ZwYkNJNkluSmxjM1IxZDJGb2VYVXhNMEI2WlhSdFlXbHNMbU52YlNJc0ltbGhkQ0k2TVRZd09EZzRNRGd5TkN3aVpYaHdJam94TmpBNE9UWTNNakkwZlEuZUFzREh6YUZPTWxmSUtYVjJXbHVVWnhnM3FxOVVSU3gxZjhrVDJBb3hJaw==",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SjFjMlZ5WDJsa0lqb3pMQ0psYldGcGJDSTZJbUZzWkdscmFHRnVNVE5BZW1WMGJXRnBiQzVqYjIwaUxDSnBZWFFpT2pFMk1UQXhNVEF5T0RFc0ltVjRjQ0k2TVRZeE1ERXhNRE0wTVgwLlJTYjJmdDZUR3ZudHFyc195WV92MzIzSl9oWUlGYk5aZFJ3V3BoVTVjN2s=",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{tonase_task}}/topup/2",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"topup",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\"user_id\": 12,\r\n\"topup_no\": \"bfc-4167846221\",\r\n\"topup_amount\": 500000,\r\n\"topup_method\": \"credit card visa\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{tonase_task}}/topup/1",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"topup",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "transfer",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n \"transfer_from\": 4757120990690150,\r\n \"transfer_to\": 4627797580973481,\r\n \"transfer_amount\": 100000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{tonase_task}}/transfer",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"transfer"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "result",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SjFjMlZ5WDJsa0lqb3pMQ0psYldGcGJDSTZJbUZzWkdscmFHRnVNVE5BZW1WMGJXRnBiQzVqYjIwaUxDSnBZWFFpT2pFMk1UQXhNVEEwTVRZc0ltVjRjQ0k2TVRZeE1ERTVOamd4Tm4wLkZER2FIOEJXeWpFODFaTTBjSHVtd0s5a09sV1Zxd1IxMGV3LXpwTFd6WHM=",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{tonase_task}}/transfer/1",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"transfer",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "results",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{tonase_task}}/transfer",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"transfer"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "saldo",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n \"user_id\": 1,\r\n \"total_balance\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{tonase_task}}/user/saldo",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"user",
+								"saldo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "results",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{tonase_task}}/user/saldo",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"user",
+								"saldo"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "result",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SjFjMlZ5WDJsa0lqb3pMQ0psYldGcGJDSTZJbUZzWkdscmFHRnVNVE5BZW1WMGJXRnBiQzVqYjIwaUxDSnBZWFFpT2pFMk1UQXhNVEF5T0RFc0ltVjRjQ0k2TVRZeE1ERXhNRE0wTVgwLlJTYjJmdDZUR3ZudHFyc195WV92MzIzSl9oWUlGYk5aZFJ3V3BoVTVjN2s=",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{tonase_task}}/user/saldo/1",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"user",
+								"saldo",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n \"total_balance\": 50000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{tonase_task}}/user/saldo/3",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"user",
+								"saldo",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{tonase_task}}/user/saldo/3",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"user",
+								"saldo",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "withdraw",
+			"item": [
+				{
+					"name": "create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n \"user_id\": 1,\r\n \"withdraw_amount\": 100000\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{tonase_task}}/withdraw",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"withdraw"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "result",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer ZXlKaGJHY2lPaUpJVXpJMU5pSXNJblI1Y0NJNklrcFhWQ0o5LmV5SjFjMlZ5WDJsa0lqb3pMQ0psYldGcGJDSTZJbUZzWkdscmFHRnVNVE5BZW1WMGJXRnBiQzVqYjIwaUxDSnBZWFFpT2pFMk1UQXhNVEEwTVRZc0ltVjRjQ0k2TVRZeE1ERTVOamd4Tm4wLkZER2FIOEJXeWpFODFaTTBjSHVtd0s5a09sV1Zxd1IxMGV3LXpwTFd6WHM=",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{tonase_task}}/withdraw/1",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"withdraw",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "results",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{tonase_task}}/withdraw",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"withdraw"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "refresh_token",
+			"item": [
+				{
+					"name": "refresh_token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{tonase_task}}/refresh-token",
+							"host": [
+								"{{tonase_task}}"
+							],
+							"path": [
+								"refresh-token"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

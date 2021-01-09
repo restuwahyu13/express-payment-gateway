@@ -23,8 +23,8 @@ export const register = async (req: Request, res: Response): Promise<Response<an
 		})
 	}
 
-	const findUser: UsersDTO[] = await knex<UsersDTO>('users').where({ email: req.body.email }).select('*')
-	if (findUser.length > 0) {
+	const checkUserId: UsersDTO[] = await knex<UsersDTO>('users').where({ email: req.body.email }).select('*')
+	if (checkUserId.length > 0) {
 		return res.status(409).json({
 			status: res.statusCode,
 			method: req.method,
