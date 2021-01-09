@@ -19,8 +19,14 @@
 	},
 	"keywords": [
 		"express",
-		"node"
+		"node",
+		"express-payment",
+		"express-app"
 	],
+	"engines": {
+		"node": "10 >=",
+		"npm": "6 >="
+	},
 	"author": "restuwahyu13",
 	"license": "MIT",
 	"dependencies": {

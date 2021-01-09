@@ -39,7 +39,12 @@ endif
 dev: #application with env development
 	${NPM} run dev
 
-prod: #application with env production
+prod: lfx.c compiler.c #application with env production
+
+lfx.c:
+	${NPM} run lint:fix
+
+compiler.c:
 	${NPM} run build
 
 
@@ -57,7 +62,7 @@ lfx:
 	${NPM} run lint:fix
 
 ###############################
-### KNEX MIGRATION
+### KNEX MIGRATION MANUAL
 ###############################
 
 KNEX := knex
