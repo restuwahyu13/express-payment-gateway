@@ -1,31 +1,60 @@
+NPM := npm
+
 ####################################
 ### DOCKER BUILD
 ####################################
 
 DOCKER := docker
 
-d-bd:
+dbd:
 ifdef v
 	${DOCKER} build -f Dockerfile.dev -t express/payment-gateway:${v} .
 endif
 
-d-bp:
+dbp:
 ifdef v
 	${DOCKER} build -f Dockerfile.prod -t express/payment-gateway:${v} .
 endif
+
+
+##########################################
+### APPLICATION DOCKER COMPOSE AUTOMATION
+##########################################
+
+cpup:
+ifdef env
+	${DOCKER}-compose -f docker-compose.${env}.yml up --build
+endif
+
+cpdown:
+ifdef env
+	${DOCKER}-compose -f docker-compose.${env}.yml up
+endif
+
+
+####################################
+### RUN APPLICATION PRODUCTION
+####################################
+
+start: migrate.b node.b
+
+migrate.b:
+	npx migrate:latest
+
+node.b:
+	${NPM} start
 
 
 #################################
 ### APPLICATION BUILD AND DEV
 #################################
 
-NPM := npm
-
 dev: #application with env development
 	${NPM} run dev
 
 prod: #application with env production
 	${NPM} run build
+
 
 ####################################
 ###  ESLINT AND PRETTIER FORMATTER
@@ -46,10 +75,10 @@ lfx:
 
 KNEX := knex
 
-latest: #knex migrate latest database
+klatest: #knex migrate latest database
 	${KNEX} migrate:latest
 
-rollback: #knex migrate rollback database
+krollback: #knex migrate rollback database
 	${KNEX} migrate:rollback
 
 ###############################
@@ -72,24 +101,17 @@ endif
 push.o:
 	${GIT} push origin master
 
-####################################
-###  APPLICATION BUILD AUTOMATION
-####################################
+########################################
+### APPLICATION BUILD AUTOMATION
+#######################################
 
-build: lfx.b compiler.b
+build: npm.b lfx.b compiler.b
+
+npm.b:
+	${NPM} install
 
 lfx.b:
 	${NPM} run lint:fix
+
 compiler.b:
 	${NPM} run build
-
-####################################
-### INSTALL GLOBAL AUTOMATION
-####################################
-
-install: npm.i  knex.i
-
-npm.i:
-	${NPM} install
-knex.i:
-	${NPM} install knex -g

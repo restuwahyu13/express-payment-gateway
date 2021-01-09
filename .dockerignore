@@ -4,3 +4,4 @@ backups
 README.md
 .git
 .gitignore
+.env

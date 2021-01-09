@@ -1,0 +1,65 @@
+version: '3.8'
+services:
+  web:
+    container_name: express_app
+    restart: on-failure
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    environment:
+      - PG_HOST=db
+      - PG_USERNAME=restuwahyu13
+      - PG_PASSWORD=restuwahyu13
+      - PG_DATABASE=payment
+      - NODE_ENV=development
+      - ACCESS_TOKEN_SECRET=a9b28bb5ba43c098c84a2ba8aa9afd
+      - REFRESH_TOKEN_SECRET=022bdb47d73054581388d1a3f88d91
+      - SG_SECRET=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
+      - URL_DEV=http://localhost:3000
+    ports:
+      - 3000:3000
+    networks:
+      - web_network
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      - db
+  db:
+    container_name: pg_database
+    restart: always
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=restuwahyu13
+      - POSTGRES_PASSWORD=restuwahyu13
+      - POSTGRES_DB=payment
+    ports:
+      - 5432:5432
+    networks:
+      - db_network
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+  dashboard:
+    container_name: pg_admin
+    restart: always
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=restuwahyu13@zetmail.com
+      - PGADMIN_DEFAULT_PASSWORD=restuwahyu13
+    ports:
+      - 8080:80
+    networks:
+      - dashboard_network
+    volumes:
+      - pgadmin:/var/lib/pgadmin/data
+    depends_on:
+      - db
+
+volumes:
+  pgdata:
+  pgadmin:
+
+networks:
+  web_network:
+  db_network:
+  dashboard_network:

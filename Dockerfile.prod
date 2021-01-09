@@ -2,13 +2,9 @@
 FROM node:14.15.4-alpine3.12 AS node
 RUN apk add make
 WORKDIR /app
-COPY package*.json \
-  .editorconfig \
-  .eslintignore\
-  .eslintrc \
-  .prettierrc ./
 ENV NODE_ENV=production \
   PG_URI=postgres://unonswb1b31udvo34inm:lOBbizlCbwxMhx856aLW@bo2hucjq3p8jku9euakw-postgresql.services.clever-cloud.com:5432/bo2hucjq3p8jku9euakw
+COPY package*.json /app
 RUN apk add make
 COPY . ./
 
@@ -16,8 +12,7 @@ COPY . ./
 FROM node AS build
 WORKDIR /app
 COPY --from=node /app ./
-RUN make install \
-  && make build
+RUN make dockerfile
 
 #### STAGE THREE
 FROM mhart/alpine-node:14
