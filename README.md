@@ -1,15 +1,16 @@
 ## Express Payment Gateway Api (Tonase)
 
-### FEATURES
+### Features
+
 - [x] Auth with JWT and Auth with Role Permission
 - [x] Advanced Login And Register
-- [x] Refresh Token JWT 
+- [x] Refresh Token JWT
 - [x] Confirmation Email Activation, Reset Password and more
-- [x] Transfer Money To Another Users 
+- [x] Transfer Money To Another Users
 - [x] Integration With Docker
 - [x] Encryption Password
 - [x] Build Automation Using Makefile
-- [x] Any More   
+- [x] Any More
 
 ### Docker Image Registry
 
@@ -38,6 +39,7 @@ docker pull 705471/express-payment:<tag>
   ```
 
 - Dockerfile Build
+
   ```sh
   make dbd or make dbp
   ```
