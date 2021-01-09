@@ -1,4 +1,5 @@
 NPM := npm
+NPX := npx
 
 ####################################
 ### DOCKER BUILD
@@ -23,27 +24,13 @@ endif
 
 cpup:
 ifdef env
-	${DOCKER}-compose -f docker-compose.${env}.yml up --build
+	${DOCKER}-compose -f docker-compose.${env}.yml up --build -d
 endif
 
 cpdown:
 ifdef env
-	${DOCKER}-compose -f docker-compose.${env}.yml up
+	${DOCKER}-compose -f docker-compose.${env}.yml down
 endif
-
-
-####################################
-### RUN APPLICATION PRODUCTION
-####################################
-
-start: migrate.b node.b
-
-migrate.b:
-	npx migrate:latest
-
-node.b:
-	${NPM} start
-
 
 #################################
 ### APPLICATION BUILD AND DEV
@@ -105,7 +92,7 @@ push.o:
 ### APPLICATION BUILD AUTOMATION
 #######################################
 
-build: npm.b lfx.b compiler.b
+bdev: npm.b lfx.b
 
 npm.b:
 	${NPM} install
@@ -113,5 +100,13 @@ npm.b:
 lfx.b:
 	${NPM} run lint:fix
 
-compiler.b:
+bprod: npm.i lfx.i compiler.i
+
+npm.i:
+	${NPM} install
+
+lfx.i:
+	${NPM} run lint:fix
+
+compiler.i:
 	${NPM} run build

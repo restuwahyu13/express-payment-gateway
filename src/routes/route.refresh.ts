@@ -13,4 +13,9 @@ router.post('/refresh-token', (req: Request, res: Response) => {
 	})
 })
 
+router.get(
+	'/',
+	(req: Request, res: Response): Response<any> => res.send('<h1>Welcome To Express Fake Payment Gateway</h1>')
+)
+
 export default router

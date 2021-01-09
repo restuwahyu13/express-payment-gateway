@@ -2,36 +2,34 @@
 FROM node:12-alpine AS node
 RUN apk add make
 WORKDIR /app
-ENV NODE_ENV=development
 COPY package*.json \
-  .editorconfig \
-  .eslintignore\
-  .eslintrc \
-  .prettierrc ./
-RUN apk add make \
-  curl \
-  vim
-COPY . .
+	.editorconfig \
+	.eslintignore\
+	.eslintrc \
+	.prettierrc ./
+RUN apk add make
+COPY . ./
 
 #### STAGE TWO
 FROM node AS build
 WORKDIR /app
-COPY --from=node . /app
-RUN make build
+COPY --from=node ./app ./
+RUN make bdev
 
 #### STAGE THREE
 FROM mhart/alpine-node:12
 WORKDIR /app
+COPY --from=build /app ./
 ENV NODE_ENV="development" \
-  PG_HOST="db" \
-  PG_USERNAME="restuwahyu13" \
-  PG_PASSWORD="restuwahyu13" \
-  PG_DATABASE="payment" \
-  PG_PORT="5432" \
-  ACCESS_TOKEN_SECRET="a9b28bb5ba43c098c84a2ba8aa9afd" \
-  REFRESH_TOKEN_SECRET="022bdb47d73054581388d1a3f88d91"\
-  SG_SECRET="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" \
-  URL_DEV="http://localhost:3000"
-COPY --from=build /app .
+	PG_HOST="db" \
+	PG_USERNAME="restuwahyu13" \
+	PG_PASSWORD="restuwahyu13" \
+	PG_DATABASE="payment" \
+	PG_PORT="5432" \
+	ACCESS_TOKEN_SECRET="a9b28bb5ba43c098c84a2ba8aa9afd" \
+	REFRESH_TOKEN_SECRET="022bdb47d73054581388d1a3f88d91"\
+	SG_SECRET="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" \
+	URL_DEV="http://localhost:3000"
+RUN chmod 777 ./scripts/start-dev.sh
 EXPOSE 3000
-CMD make start
+CMD ./scripts/start-dev.sh

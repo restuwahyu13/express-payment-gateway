@@ -5,7 +5,6 @@ import { registerValidator, loginValidator, emailValidator } from '../utils/util
 
 const router: Router = express.Router()
 
-router.get('/', (req: Request, res: Response): Response<any> => res.send('Typescript is Running'))
 router.post('/user/register', [...registerValidator(), fileUpload.fields([{ name: 'photo' }])], userController.register)
 router.post('/user/login', loginValidator(), userController.login)
 router.get('/user/activation/:token', emailValidator(), userController.activation)

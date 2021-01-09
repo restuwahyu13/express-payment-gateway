@@ -1,21 +1,22 @@
 version: '3.8'
 services:
+  # webapp config
   web:
     container_name: express_app
     restart: on-failure
     build:
       context: .
-      dockerfile: Dockerfile.dev
-    env_file: .env
-    ports:
-      - 3000:3000
-    networks:
-      - web_network
+      dockerfile: Dockerfile.prod
+    depends_on:
+      - db
     volumes:
       - .:/app
       - /app/node_modules
-    depends_on:
-      - db
+    ports:
+      - 3000:3000
+    networks:
+      express_network:
+  # postgres config
   db:
     container_name: pg_database
     restart: always
@@ -24,33 +25,32 @@ services:
       - POSTGRES_USER=restuwahyu13
       - POSTGRES_PASSWORD=restuwahyu13
       - POSTGRES_DB=payment
+    volumes:
+      - pgdata:/var/lib/postgresql/data
     ports:
       - 5432:5432
     networks:
-      - db_network
-    volumes:
-      - pgdata:/var/lib/postgresql/data
+      express_network:
+  # dbadmin config
   dashboard:
     container_name: pg_admin
     restart: always
     image: dpage/pgadmin4:latest
-    environment:
-      - PGADMIN_EMAIL_DEFAULT=restuwahyu13@zetmail.com
-      - PGADMIN_PASSWORD_DEFAULT=restuwahyu13
-    ports:
-      - 8080:80
-    networks:
-      - dashboard_network
     volumes:
       - pgadmin:/var/lib/pgadmin/data
     depends_on:
       - db
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=restuwahyu13@zetmail.com
+      - PGADMIN_DEFAULT_PASSWORD=restuwahyu13
+    ports:
+      - 8080:80
+    networks:
+      express_network:
 
 volumes:
   pgdata:
   pgadmin:
 
 networks:
-  web_network:
-  db_network:
-  dashboard_network:
+  express_network:

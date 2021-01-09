@@ -1,22 +1,27 @@
 #### STAGE ONE
-FROM node:14.15.4-alpine3.12 AS node
+FROM node:12-alpine AS node
 RUN apk add make
 WORKDIR /app
-ENV NODE_ENV=production \
-  PG_URI=postgres://unonswb1b31udvo34inm:lOBbizlCbwxMhx856aLW@bo2hucjq3p8jku9euakw-postgresql.services.clever-cloud.com:5432/bo2hucjq3p8jku9euakw
-COPY package*.json /app
+COPY package*.json ./
 RUN apk add make
 COPY . ./
 
 #### STAGE TWO
 FROM node AS build
 WORKDIR /app
-COPY --from=node /app ./
-RUN make dockerfile
+COPY --from=node ./app ./
+RUN make bprod
 
 #### STAGE THREE
-FROM mhart/alpine-node:14
+FROM mhart/alpine-node:12
 WORKDIR /app
 COPY --from=build /app ./
+ENV NODE_ENV="production" \
+  PG_URI="postgres://restuwahyu13:restuwahyu13@db:5432/payment" \
+  ACCESS_TOKEN_SECRET="a9b28bb5ba43c098c84a2ba8aa9afd" \
+  REFRESH_TOKEN_SECRET="022bdb47d73054581388d1a3f88d91"\
+  SG_SECRET="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" \
+  URL_DEV="http://localhost:3000"
+RUN chmod 777 ./scripts/start-prod.sh
 EXPOSE 3000
-CMD npm start
+CMD ./scripts/start-prod.sh
