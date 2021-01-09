@@ -3,7 +3,7 @@ services:
   # webapp config
   web:
     container_name: express_app
-    restart: on-failure
+    restart: always
     build:
       context: .
       dockerfile: Dockerfile.prod
@@ -31,26 +31,9 @@ services:
       - 5432:5432
     networks:
       express_network:
-  # dbadmin config
-  dashboard:
-    container_name: pg_admin
-    restart: always
-    image: dpage/pgadmin4:latest
-    volumes:
-      - pgadmin:/var/lib/pgadmin/data
-    depends_on:
-      - db
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=restuwahyu13@zetmail.com
-      - PGADMIN_DEFAULT_PASSWORD=restuwahyu13
-    ports:
-      - 8080:80
-    networks:
-      express_network:
 
 volumes:
   pgdata:
-  pgadmin:
 
 networks:
   express_network:

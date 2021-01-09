@@ -21,7 +21,7 @@ ENV NODE_ENV="production" \
   ACCESS_TOKEN_SECRET="a9b28bb5ba43c098c84a2ba8aa9afd" \
   REFRESH_TOKEN_SECRET="022bdb47d73054581388d1a3f88d91"\
   SG_SECRET="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" \
-  URL_DEV="http://localhost:3000"
+  URL_PROD="http://localhost:3000"
 RUN chmod 777 ./scripts/start-prod.sh
 EXPOSE 3000
 CMD ./scripts/start-prod.sh

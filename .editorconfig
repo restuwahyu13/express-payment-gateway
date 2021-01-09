@@ -5,7 +5,7 @@ charset = utf-8
 end_of_line = lf
 insert_final_newline = true
 
-[*.{ts,test.ts,json}]
+[*.{ts,test.ts,json,yml}]
 indent_style = tab
 indent_size = 2
 

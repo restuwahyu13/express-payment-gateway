@@ -13,4 +13,10 @@ export const routeMiddleware = (app: Application): void => {
 	app.use('/api/v1', saldoRoute)
 	app.use('/api/v1', refreshRoute)
 	app.use('/api/v1', withdrawRoute)
+	app.get(
+		'/',
+		(req: Request, res: Response): Response<any> => {
+			return res.send('<h1>Welcome To Express Fake Payment Gateway</h1>')
+		}
+	)
 }

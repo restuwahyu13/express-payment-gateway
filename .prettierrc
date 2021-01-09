@@ -7,6 +7,7 @@
 	"proseWrap": "always",
 	"trailingComma": "none",
 	"quoteProps": "as-needed",
+	"endOfLine": true,
 	"semi": false,
-	"printWidth": 120
+	"printWidth": 120,
 }
