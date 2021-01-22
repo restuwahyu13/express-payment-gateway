@@ -1,4 +1,4 @@
-## Express Payment Gateway Api (Tonase)
+## Express Payment Gateway Api
 
 ### Features
 
